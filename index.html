@@ -12,10 +12,10 @@
 </head>
 <body>
     <h1>ByG's Web App</h1>
-    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', confirmed)">
-    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv', recovered)">
-    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', deaths)">
-    <input type="button" value="StartScript" onclick="loadData('population.csv', population)">
+    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', sconfirmed)">
+    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv', srecovered)">
+    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', sdeaths)">
+    <input type="button" value="StartScript" onclick="loadData('population.csv', spopulation)">
 
 
 <script>
@@ -23,6 +23,10 @@
     var recovered = [];
     var deaths = [];
     var population = [];
+    let sconfirmed ="";
+    var srecovered ="";
+    var sdeaths ="";
+    var spopulation ="";
 
 
 
@@ -35,7 +39,7 @@
     var allTextLines = [];
 
     $(document).ready(function() {
-        console.log("document ready is called");
+/*        console.log("document ready is called");
         $.ajax({
             type: "GET",
             url: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
@@ -44,19 +48,43 @@
             dataType: "text",
             success: function(data) {processData(data);}
          });
-    });
+*/    });
 
     function loadData(v_url, v_array){
-        console.log("loadData is called");
-        console.log(v_url);
-//        array[0] = [ 1, 2, 3, 4 ,5 ];
+        console.log("    loadData is called");
+//        console.log(v_url);
+//        v_array[0] = [ 1, 2, 3, 4 ,5 ];
 //        console.log(v_array);
-        
+        var text  = getText(v_url);
+        console.log(text);
+    }
 
+    function getText(v_url){
+        var retval = 0;
+        console.log("    getText is called");
+        // read text from URL location
+        var request = new XMLHttpRequest();
+        request.open('GET', v_url, true);
+        request.send(null);
+        request.onreadystatechange = function () {
+            if (request.readyState === 4 && request.status === 200) {
+                var type = request.getResponseHeader('Content-Type');
+                if (type.indexOf("text") !== 1) {
+//                    console.log(request.responseText);
+//                    return request.responseText;
+//                    retval = 10;
+//                    console.log(retval);
+//                    return retval;
+                }
+            }
+        }
+//        retval = request.responseText;
+        retval = [1,2,3,4,5];
+        return retval;
     }
 
     function processData(allText, array) {
-        console.log("processData is called");
+        console.log("    processData is called");
         allTextLines = allText.split(/\r\n|\n/);
         var headers = allTextLines[0].split(',');
 
