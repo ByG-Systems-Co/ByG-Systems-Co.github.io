@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>ByG's Web App</h1>
+    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', confirmed)">
+    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv', recovered)">
+    <input type="button" value="StartScript" onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', deaths)">
+    <input type="button" value="StartScript" onclick="loadData('population.csv', population)">
+
+
+<script>
+    var confirmed = [];
+    var recovered = [];
+    var deaths = [];
+    var population = [];
+
+
+
+
+
+
+
+
+    var lines = [];
+    var allTextLines = [];
+
+    $(document).ready(function() {
+        console.log("document ready is called");
+        $.ajax({
+            type: "GET",
+            url: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
+    //        url: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv",
+    //        url: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv",
+            dataType: "text",
+            success: function(data) {processData(data);}
+         });
+    });
+
+    function loadData(v_url, v_array){
+        console.log("loadData is called");
+        console.log(v_url);
+//        array[0] = [ 1, 2, 3, 4 ,5 ];
+//        console.log(v_array);
+        
+
+    }
+
+    function processData(allText, array) {
+        console.log("processData is called");
+        allTextLines = allText.split(/\r\n|\n/);
+        var headers = allTextLines[0].split(',');
+
+        for (var i=1; i<allTextLines.length; i++) {
+            var data = allTextLines[i].split(',');
+            if (data.length == headers.length) {
+
+                var tarr = [];
+                for (var j=0; j<headers.length; j++) {
+                    //tarr.push(headers[j]+":"+data[j]);
+                    tarr.push(data[j]);
+                }
+
+                lines.push(tarr);
+            }
+        }
+
+        var hungary = 0;
+        var slovakia = 0;
+        var ukraine = 0;
+        var romania = 0;
+        var serbia = 0;
+        var croatia = 0;
+        var slovenia = 0;
+        var austria = 0;
+        var germany = 0;
+
+//        console.log(allTextLines.length);
+//        console.log(lines.length);
+
+        for(var i = 0; i < lines.length; i++)
+        {
+            if(lines[i][1]=="Hungary") hungary = i;
+            if(lines[i][1]=="Slovakia") slovakia = i;
+            if(lines[i][1]=="Ukraine") ukraine = i;
+            if(lines[i][1]=="Romania") romania = i;
+            if(lines[i][1]=="Serbia") serbia = i;
+            if(lines[i][1]=="Croatia") croatia = i;
+            if(lines[i][1]=="Slovenia") slovenia = i;
+            if(lines[i][1]=="Austria") austria = i;
+            if(lines[i][1]=="Germany") germany = i;
+
+        }
+//        console.log(lines[141][1]);
+        var hungary_all = [...lines[141]];
+        var headers_cropped = [...headers];
+        var hungary_new = [];
+//        console.log(hungary_all);
+        hungary_all.splice(0,4);
+        headers_cropped.splice(0,4);
+        hungary_new[0] = 0;
+        for (var i = 1; i < hungary_all.length; i++)
+        {
+            hungary_new[i]=hungary_all[i]-hungary_all[i-1];
+        }
+//        console.log(headers_cropped);
+//        console.log(hungary_all);
+//        console.log(hungary_new);
+
+//        console.log (hungary,slovakia,ukraine,romania,serbia,croatia,slovenia,austria,germany);
+
+    }
+</script>
+
+</body>
+</html>
