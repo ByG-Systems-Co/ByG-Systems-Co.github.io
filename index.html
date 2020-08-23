@@ -14,18 +14,12 @@
 </head>
 
 <body>
-    <h1>ByG's Web App</h1>
-    <input type="button" value="Write String Lengths" onclick="console.log(rawconfirmed.length);
-                                                               console.log(rawrecovered.length);
-                                                               console.log(rawdeaths.length);
-                                                               console.log(rawpopulation.length);
-                                                               console.log('');">
-    <input type="button" value="Write Array Lengths"  onclick="console.log(allconfirmed.length);
-                                                               console.log(allrecovered.length);
-                                                               console.log(alldeaths.length);
-                                                               console.log(allpopulation.length);
-                                                               console.log('');">
-    <br><br>
+    <h1>ByG's COVID-19 Visualisation</h1>
+    <p>Based on the information of CSSEGISandData on 
+        <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series">
+        GitHub</a> released datasets.
+    </p>
+
     <label for="countryselector">Choose a country:</label>
     <select name="countryselector" id="countryselector" onchange="countrySelectorChanged(value)">
         <option value="Hungary">Hungary</option>
@@ -37,18 +31,33 @@
         <option value="Croatia">Croatia</option>
         <option value="Slovenia">Slovenia</option>
         <option value="Germany">Germany</option>
+        <option value="Italy">Italy</option>
+        <option value="Spain">Spain</option>
+        <option value="France">France</option>
     </select>
 
-    <p id="country"></p>
-    <p id="confirmed"></p>
-    <p id="recovered"></p>
-    <p id="deaths"></p>
-    <p id="population"></p>
-    <p id="populationvalue"></p>
+    <label for="chartselector">Choose a chart:</label>
+    <select name="chartselector" id="chartselector" onchange="chartselectorChanged(value)">
+        <option value="ActiveCases">Active Cases</option>
+        <option value="ActiveCases1M">Active Cases / 1 Million</option>
+        <option value="NewCases">New Cases</option>
+        <option value="NewCases1M">New Cases / 1 Million</option>
+<!--        <option value="Romania">Romania</option>
+        <option value="Serbia">Serbia</option>
+        <option value="Croatia">Croatia</option>
+        <option value="Slovenia">Slovenia</option>
+        <option value="Germany">Germany</option>
+        <option value="Italy">Italy</option>
+        <option value="Spain">Spain</option>
+        <option value="France">France</option> -->
+    </select>
+
+
     <p><span id="startdate"></span> - <span id="enddate"></span></p>
 
     <script>
         let country = "";
+        let charttype = "";
         let rawconfirmed = "";
         let rawrecovered = "";
         let rawdeaths = "";
@@ -63,7 +72,7 @@
         let deathsID = "";
         let populationID = "";
 
-        let dateaxis = [];
+        
 
         let lines = [];
         let allTextLines = [];
@@ -133,43 +142,38 @@
         {
             country = value;
             lookForIDs(country);
-            document.getElementById("country").innerHTML = country;
-            document.getElementById("confirmed").innerHTML = confirmedID;
-            document.getElementById("recovered").innerHTML = recoveredID;
-            document.getElementById("deaths").innerHTML = deathsID;
-            document.getElementById("population").innerHTML = populationID;
-            document.getElementById("populationvalue").innerHTML = allpopulation[populationID][1]/1000000;
 
+            prepareDataForChart(country);
 
             var ctx = document.getElementById('myChart').getContext('2d');
 
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: allconfirmed[0],
+                    labels: dateaxis,
                     datasets: [{
                         label: country,
-                        data: allconfirmed[confirmedID]
-                    },{
-                        label: country,
-                        data: allrecovered[recoveredID]
-                    },{
-                        label: country,
-                        data: alldeaths[deathsID]
+                        data: dataactive1M,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)'
                     }]
                 },
                 options: {
                     scales: {
                         yAxes: [{
                             ticks: {
-                                beginAtZero: true
+                                beginAtZero: true,
+                                max: 5000,
+                                min: 0
                             }
                         }]
                     }
                 }
             });
+        }
 
-
+        function chartselectorChanged(value)
+        {
+            charttype = value;
         }
 
         function lookForIDs(country) 
@@ -180,24 +184,40 @@
             for (let i = 0; i < allpopulation.length; i++) if (allpopulation[i][0] == country) populationID = i;
         }
 
+        let dateaxis = [];
+        let dataallcases = [];
+        let datanewcases = [];
+        let datanewcases1M = [];
+        let dataactive = [];
+        let dataactive1M = [];
+
         function prepareDataForChart(country)
         {
+            dateaxis = [];
+            dataallcases = [];
+            datanewcases = [];
+            datanewcases1M = [];
+            dataactive = [];
+            dataactive1M = [];
             for( let i = 4; i < allconfirmed[0].length; i++)
             {
                 dateaxis.push(convertDate(allconfirmed[0][i]));
-
-
-
+                dataallcases.push(allconfirmed[confirmedID][i]);
+                dataactive.push(allconfirmed[confirmedID][i]-allrecovered[recoveredID][i]-alldeaths[deathsID][i]);
+                dataactive1M.push(dataactive[i-4]/(allpopulation[populationID][1]/1000000));
+                if ( i == 4 ) 
+                {
+                    datanewcases.push(0);
+                    datanewcases1M.push(0);
+                } else {
+                    datanewcases.push(allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]);
+                    datanewcases1M.push((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1])/(allpopulation[populationID][1]/1000000));
+                }
             }
         }
     </script>
 
     <div width="800"><canvas id="myChart" width="800" height="400"></canvas></div>
-
-
-    <script>
-    </script>
-
 
 </body>
 </html>
