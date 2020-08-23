@@ -10,17 +10,11 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 
 <body>
     <h1>ByG's Web App</h1>
-    <input type="button" value="Load Confirmed"
-        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')">
-    <input type="button" value="Load Recovered"
-        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')">
-    <input type="button" value="Load Deaths"
-        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')">
-    <input type="button" value="Load Population" onclick="loadData('population.csv')"><br><br>
     <input type="button" value="Write String Lengths" onclick="console.log(rawconfirmed.length);
                                                                console.log(rawrecovered.length);
                                                                console.log(rawdeaths.length);
@@ -31,30 +25,78 @@
                                                                console.log(alldeaths.length);
                                                                console.log(allpopulation.length);
                                                                console.log('');">
-    <input type="button" value="MakeArrayFromCSVs" onclick="makeArrays()">
+    <br><br>
+    <label for="countryselector">Choose a country:</label>
+    <select name="countryselector" id="countryselector" onchange="countrySelectorChanged(value)">
+        <option value="Hungary">Hungary</option>
+        <option value="Austria">Austria</option>
+        <option value="Slovakia">Slovakia</option>
+        <option value="Ukraine">Ukraine</option>
+        <option value="Romania">Romania</option>
+        <option value="Serbia">Serbia</option>
+        <option value="Croatia">Croatia</option>
+        <option value="Slovenia">Slovenia</option>
+        <option value="Germany">Germany</option>
+    </select>
 
+    <p id="country"></p>
+    <p id="confirmed"></p>
+    <p id="recovered"></p>
+    <p id="deaths"></p>
+    <p id="population"></p>
+    <p id="populationvalue"></p>
+    <p><span id="startdate"></span> - <span id="enddate"></span></p>
 
     <script>
-        let allconfirmed = [];
-        let allrecovered = [];
-        let alldeaths = [];
-        let allpopulation = [];
+        let country = "";
         let rawconfirmed = "";
         let rawrecovered = "";
         let rawdeaths = "";
         let rawpopulation = "";
+        let allconfirmed = [];
+        let allrecovered = [];
+        let alldeaths = [];
+        let allpopulation = [];
+
+        let confirmedID = "";
+        let recoveredID = "";
+        let deathsID = "";
+        let populationID = "";
+
+        let dateaxis = [];
 
         let lines = [];
         let allTextLines = [];
 
-        $(document).ready(function () {
+        $(document).ready(async function () {
 //*
-            loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
-            loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
-            loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
-            loadData("population.csv");
+            await loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
+            await loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
+            await loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
+            await loadData("population.csv");
+
+            await convertStringToArray(rawconfirmed, allconfirmed);
+            await convertStringToArray(rawrecovered, allrecovered);
+            await convertStringToArray(rawdeaths, alldeaths);
+            await convertStringToArray(rawpopulation, allpopulation);
+
+            let e = document.getElementById("countryselector");
+            countrySelectorChanged(e.options[e.selectedIndex].value);
+            
+            document.getElementById("startdate").innerHTML = convertDate(allconfirmed[0][4]);
+            document.getElementById("enddate").innerHTML = convertDate(allconfirmed[0][allconfirmed[0].length-1]);
 //*/
+
+
+
         });
+
+        function convertDate(date)
+        {
+            let data = date.split('/');
+            let retval = "20" + data[2] + "." + data[0] + "." + data[1];
+            return retval;
+        }
 
         async function loadData(v_url) {
             try {
@@ -70,81 +112,92 @@
         }
 
         function getText(v_url) {
-            var data = jQuery.get(v_url, function(data) {
+            var data = jQuery.get(v_url, function(data) 
+            {
                 return data;
             });
             return data;
         }
 
-        function makeArrays()
+        function convertStringToArray(string, array)
         {
-            console.log("makeArray is called")
+            let lines = string.split(/\r\n|\n/);
+            for (let i = 0; i < lines.length; i++ )
+            {
+                let data = lines[i].split(',');
+                array.push(data);
+            }
         }
 
-        function processData(allText, array) {
-            console.log("    processData is called");
-            allTextLines = allText.split(/\r\n|\n/);
-            var headers = allTextLines[0].split(',');
+        function countrySelectorChanged(value)
+        {
+            country = value;
+            lookForIDs(country);
+            document.getElementById("country").innerHTML = country;
+            document.getElementById("confirmed").innerHTML = confirmedID;
+            document.getElementById("recovered").innerHTML = recoveredID;
+            document.getElementById("deaths").innerHTML = deathsID;
+            document.getElementById("population").innerHTML = populationID;
+            document.getElementById("populationvalue").innerHTML = allpopulation[populationID][1]/1000000;
 
-            for (var i = 1; i < allTextLines.length; i++) {
-                var data = allTextLines[i].split(',');
-                if (data.length == headers.length) {
 
-                    var tarr = [];
-                    for (var j = 0; j < headers.length; j++) {
-                        //tarr.push(headers[j]+":"+data[j]);
-                        tarr.push(data[j]);
+            var ctx = document.getElementById('myChart').getContext('2d');
+
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: allconfirmed[0],
+                    datasets: [{
+                        label: country,
+                        data: allconfirmed[confirmedID]
+                    },{
+                        label: country,
+                        data: allrecovered[recoveredID]
+                    },{
+                        label: country,
+                        data: alldeaths[deathsID]
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
                     }
-
-                    lines.push(tarr);
                 }
-            }
+            });
 
-            var hungary = 0;
-            var slovakia = 0;
-            var ukraine = 0;
-            var romania = 0;
-            var serbia = 0;
-            var croatia = 0;
-            var slovenia = 0;
-            var austria = 0;
-            var germany = 0;
 
-            //        console.log(allTextLines.length);
-            //        console.log(lines.length);
+        }
 
-            for (var i = 0; i < lines.length; i++) {
-                if (lines[i][1] == "Hungary") hungary = i;
-                if (lines[i][1] == "Slovakia") slovakia = i;
-                if (lines[i][1] == "Ukraine") ukraine = i;
-                if (lines[i][1] == "Romania") romania = i;
-                if (lines[i][1] == "Serbia") serbia = i;
-                if (lines[i][1] == "Croatia") croatia = i;
-                if (lines[i][1] == "Slovenia") slovenia = i;
-                if (lines[i][1] == "Austria") austria = i;
-                if (lines[i][1] == "Germany") germany = i;
+        function lookForIDs(country) 
+        {
+            for (let i = 0; i < allconfirmed.length; i++)  if (allconfirmed[i][1]  == country) confirmedID = i;
+            for (let i = 0; i < allrecovered.length; i++)  if (allrecovered[i][1]  == country) recoveredID = i;
+            for (let i = 0; i < alldeaths.length; i++)     if (alldeaths[i][1]     == country) deathsID = i;
+            for (let i = 0; i < allpopulation.length; i++) if (allpopulation[i][0] == country) populationID = i;
+        }
+
+        function prepareDataForChart(country)
+        {
+            for( let i = 4; i < allconfirmed[0].length; i++)
+            {
+                dateaxis.push(convertDate(allconfirmed[0][i]));
+
+
 
             }
-            //        console.log(lines[141][1]);
-            var hungary_all = [...lines[141]];
-            var headers_cropped = [...headers];
-            var hungary_new = [];
-            //        console.log(hungary_all);
-            hungary_all.splice(0, 4);
-            headers_cropped.splice(0, 4);
-            hungary_new[0] = 0;
-            for (var i = 1; i < hungary_all.length; i++) {
-                hungary_new[i] = hungary_all[i] - hungary_all[i - 1];
-            }
-            //        console.log(headers_cropped);
-            //        console.log(hungary_all);
-            //        console.log(hungary_new);
-
-            //        console.log (hungary,slovakia,ukraine,romania,serbia,croatia,slovenia,austria,germany);
-
         }
     </script>
 
-</body>
+    <div width="800"><canvas id="myChart" width="800" height="400"></canvas></div>
 
+
+    <script>
+    </script>
+
+
+</body>
 </html>
