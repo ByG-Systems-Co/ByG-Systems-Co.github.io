@@ -11,6 +11,15 @@
     <meta name="theme-color" content="#ffffff">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <style>
+        #innerbox
+        {
+        width:1500px;
+        height:800px; /* or whatever width you want. */
+        display: inline-block;
+        }
+    </style>
 </head>
 
 <body>
@@ -217,7 +226,8 @@
         }
     </script>
 
-    <div width="800"><canvas id="myChart" width="800" height="400"></canvas></div>
+    <div id="innerbox"><canvas id="myChart"></canvas></div>
+
 
 </body>
 </html>
