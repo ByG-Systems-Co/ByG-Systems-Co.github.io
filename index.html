@@ -15,9 +15,9 @@
     <style>
         #innerbox
         {
-        width:1500px;
-        height:800px; /* or whatever width you want. */
-        display: inline-block;
+            width:1500px;
+            height:800px; /* or whatever width you want. */
+            display: inline-block;
         }
     </style>
 </head>
@@ -80,11 +80,6 @@
         let recoveredID = "";
         let deathsID = "";
         let populationID = "";
-
-        
-
-        let lines = [];
-        let allTextLines = [];
 
         $(document).ready(async function () {
 //*
@@ -161,9 +156,9 @@
                 data: {
                     labels: dateaxis,
                     datasets: [{
-                        label: country,
+                        label: "Active Cases / 1 Million",
                         data: dataactive1M,
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)'
+                        backgroundColor: 'rgba(255, 0, 0, 1)'
                     }]
                 },
                 options: {
