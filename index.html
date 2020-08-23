@@ -14,109 +14,57 @@
 
 <body>
     <h1>ByG's Web App</h1>
-    <input type="button" value="StartScript"
-        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', sconfirmed)">
-    <input type="button" value="StartScript"
-        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv', srecovered)">
-    <input type="button" value="StartScript"
-        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', sdeaths)">
-    <input type="button" value="StartScript" onclick="loadData('population.csv', spopulation)">
+    <input type="button" value="Load Confirmed"
+        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')">
+    <input type="button" value="Load Recovered"
+        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')">
+    <input type="button" value="Load Deaths"
+        onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')">
+    <input type="button" value="Load Population" onclick="loadData('population.csv')">
+    <input type="button" value="Write String Lengths" onclick="console.log(sconfirmed.length);console.log(srecovered.length);console.log(sdeaths.length);console.log(spopulation.length);console.log('');">
 
 
     <script>
-        var confirmed = [];
-        var recovered = [];
-        var deaths = [];
-        var population = [];
+        let confirmed = [];
+        let recovered = [];
+        let deaths = [];
+        let population = [];
         let sconfirmed = "";
-        var srecovered = "";
-        var sdeaths = "";
-        var spopulation = "";
+        let srecovered = "";
+        let sdeaths = "";
+        let spopulation = "";
 
-//        var retval;
-
-
-
-
-
-
-
-
-        var lines = [];
-        var allTextLines = [];
+        let lines = [];
+        let allTextLines = [];
 
         $(document).ready(function () {
-/*        console.log("document ready is called");
-        $.ajax({
-            type: "GET",
-            url: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
-    //        url: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv",
-    //        url: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv",
-            dataType: "text",
-            success: function(data) {processData(data);}
-         });
-*/    });
+//*
+            loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
+            loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
+            loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
+            loadData("population.csv");
+//*/
+        });
 
-        async function loadData(v_url, v_array) {
+        async function loadData(v_url) {
             try {
-
-            
-                console.log("LoadData:    loadData is called");
-                var rtext = await getText3(v_url);
-                console.log("LoadData:    getText is returned");
-
-                console.log(rtext);
+                var v_array = await getText(v_url);
+                if (0 <= v_url.search("confirmed"))  { sconfirmed  = v_array; }
+                if (0 <= v_url.search("recovered"))  { srecovered  = v_array; }
+                if (0 <= v_url.search("deaths"))     { sdeaths     = v_array; }
+                if (0 <= v_url.search("population")) { spopulation = v_array; }
             }
             catch{
                 console.log(error);
             }
-            
         }
 
-        async function getText(v_url) {
-            var retval = "Empty";
-            console.log("GetText:     getText is called");
-            // read text from URL location
-            var request = new XMLHttpRequest();
-            request.open('GET', v_url, true);
-            request.send(null);
-            request.onreadystatechange = await function () {
-                if (request.readyState === 4 && request.status === 200) {
-                    var type =  request.getResponseHeader('Content-Type');
-                    if (type.indexOf("text") !== 1) {
-                        retval =  request.responseText;
-                        console.log("GetText:     retval is set");
-//                        console.log(retval );
-                        return retval;
-                        return request.responseText;
-                    }
-                }
-            }
-        }
-
-        function getText2(v_url) {
-            console.log("GetText2:    getText2 is called");
-            var txtFile = new XMLHttpRequest();
-            txtFile.open("GET", v_url, true);
-            txtFile.onreadystatechange = function() {
-                if (txtFile.readyState == 4) {  // Makes sure the document is ready to parse.
-                    if (txtFile.status === 200) {  // Makes sure it's found the file.            allText = txtFile.responseText;
-                        lines = txtFile.responseText.split                        ("\n"); // Will separate each line into an array
-                        console.log("GetText2:    retval is set");
-                        return lines;
-                    }
-                }
-            }
-            txtFile.send(null);
-        }
-
-        function getText3(v_url) {
+        function getText(v_url) {
             var data = jQuery.get(v_url, function(data) {
                 return data;
             });
             return data;
         }
-
 
         function processData(allText, array) {
             console.log("    processData is called");
