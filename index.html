@@ -20,19 +20,29 @@
         onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')">
     <input type="button" value="Load Deaths"
         onclick="loadData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')">
-    <input type="button" value="Load Population" onclick="loadData('population.csv')">
-    <input type="button" value="Write String Lengths" onclick="console.log(sconfirmed.length);console.log(srecovered.length);console.log(sdeaths.length);console.log(spopulation.length);console.log('');">
+    <input type="button" value="Load Population" onclick="loadData('population.csv')"><br><br>
+    <input type="button" value="Write String Lengths" onclick="console.log(rawconfirmed.length);
+                                                               console.log(rawrecovered.length);
+                                                               console.log(rawdeaths.length);
+                                                               console.log(rawpopulation.length);
+                                                               console.log('');">
+    <input type="button" value="Write Array Lengths"  onclick="console.log(allconfirmed.length);
+                                                               console.log(allrecovered.length);
+                                                               console.log(alldeaths.length);
+                                                               console.log(allpopulation.length);
+                                                               console.log('');">
+    <input type="button" value="MakeArrayFromCSVs" onclick="makeArrays()">
 
 
     <script>
-        let confirmed = [];
-        let recovered = [];
-        let deaths = [];
-        let population = [];
-        let sconfirmed = "";
-        let srecovered = "";
-        let sdeaths = "";
-        let spopulation = "";
+        let allconfirmed = [];
+        let allrecovered = [];
+        let alldeaths = [];
+        let allpopulation = [];
+        let rawconfirmed = "";
+        let rawrecovered = "";
+        let rawdeaths = "";
+        let rawpopulation = "";
 
         let lines = [];
         let allTextLines = [];
@@ -49,10 +59,10 @@
         async function loadData(v_url) {
             try {
                 var v_array = await getText(v_url);
-                if (0 <= v_url.search("confirmed"))  { sconfirmed  = v_array; }
-                if (0 <= v_url.search("recovered"))  { srecovered  = v_array; }
-                if (0 <= v_url.search("deaths"))     { sdeaths     = v_array; }
-                if (0 <= v_url.search("population")) { spopulation = v_array; }
+                if (0 <= v_url.search("confirmed"))  { rawconfirmed  = v_array; }
+                if (0 <= v_url.search("recovered"))  { rawrecovered  = v_array; }
+                if (0 <= v_url.search("deaths"))     { rawdeaths     = v_array; }
+                if (0 <= v_url.search("population")) { rawpopulation = v_array; }
             }
             catch{
                 console.log(error);
@@ -64,6 +74,11 @@
                 return data;
             });
             return data;
+        }
+
+        function makeArrays()
+        {
+            console.log("makeArray is called")
         }
 
         function processData(allText, array) {
