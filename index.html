@@ -56,7 +56,7 @@
         <option value="ActiveCases1M">Active Cases / 1 Million</option>
     </select>
 
-    <label for="ChartTypeSelector">Y Axis type:</label>
+    <label for="ChartTypeSelector" id="ChartTypeSelectorLabel">Y Axis type:</label>
     <select name="ChartTypeSelector" id="ChartTypeSelector" onchange="selectorChanged()">
         <option value="Automatic">Automatic (for the details)</option>
         <option value="Fixed">Fixed (for the comparison)</option>
@@ -102,10 +102,10 @@
         let myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ["Data1", "Data2", "Data3", "Data4", "Data5"],
+                labels: [],
                 datasets: [{
                     label: "Dummy Chart",
-                    data: [5, 3, 8, 2, 4],
+                    data: [],
                     backgroundColor: 'rgba(255, 0, 0, 1)'
                 }]
             },
@@ -198,6 +198,9 @@
             {
                 document.getElementById("ChartRangeSelector").hidden = false;
                 document.getElementById("ChartRangeSelectorLabel").hidden = false;
+                document.getElementById("ChartTypeSelectorLabel").hidden = true;
+                document.getElementById("ChartTypeSelector").hidden = true;
+                myChart.options.scales.yAxes[0].ticks.max = parseInt(chartrange);
             } else {
                 document.getElementById("ChartRangeSelector").hidden = true;
                 document.getElementById("ChartRangeSelectorLabel").hidden = true;
@@ -206,36 +209,46 @@
             lookForIDs(country);
             prepareDataForChart(country);
 
-            chartDataSeries = dataactive1M;
-            chartDataLabel = "Active Cases / 1 Million";
-        
-            myChart.data.datasets[0].data = dataactive1M;
+            switch(chart)
+            {
+                case "Confirmed":
+                    myChart.data.datasets[0].data = dataallcases; 
+                    myChart.data.datasets[0].label = "Confirmed Cases in " + country;
+                    break;
+                case "Recovered":
+                    myChart.data.datasets[0].data = dataallrecovered;  
+                    myChart.data.datasets[0].label = "Recovered Cases in " + country;
+                    break;
+                case "Deaths":
+                    myChart.data.datasets[0].data = dataalldeaths;  
+                    myChart.data.datasets[0].label = "Deaths in " + country;
+                    break;
+                case "NewCases":
+                    myChart.data.datasets[0].data = datanewcases;  
+                    myChart.data.datasets[0].label = "New Cases in " + country;
+                    break;
+                case "NewCases1M":
+                    myChart.data.datasets[0].data = datanewcases1M;  
+                    myChart.data.datasets[0].label = "New Cases / 1 Million in " + country;
+                    break;
+                case "ActiveCases":
+                    myChart.data.datasets[0].data = dataactive;  
+                    myChart.data.datasets[0].label = "Active Cases in " + country;
+                    break;
+                case "ActiveCases1M":
+                    myChart.data.datasets[0].data = dataactive1M;  
+                    myChart.data.datasets[0].label = "Active Cases / 1 Million in " + country;
+                    break;
+                default:
+                    myChart.data.datasets[0].data = datanewcases;  
+                    myChart.data.datasets[0].label = "Should never occure...";
+                    break;
+            }
+
             myChart.data.labels = dateaxis;
-            myChart.data.datasets[0].label = "Active Cases / 1 Million in " + country;
             myChart.update();
-
-//            addData(myChart, "Almafa", 10);
-//            removeData(myChart);
         }
         
-        function addData(chart, label, data) 
-        {
-            chart.data.labels.push(label);
-            chart.data.datasets.forEach((dataset) => {
-                dataset.data.push(data);
-            });
-            chart.update();
-        }
-
-        function removeData(chart) 
-        {
-            chart.data.labels.pop();
-            chart.data.datasets.forEach((dataset) => {
-                dataset.data.pop();
-            });
-            chart.update();
-        }
-
         function lookForIDs(country) 
         {
             for (let i = 0; i < allconfirmed.length; i++)  if (allconfirmed[i][1]  == country) confirmedID = i;
@@ -246,6 +259,8 @@
 
         let dateaxis = [];
         let dataallcases = [];
+        let dataallrecovered = [];
+        let dataalldeaths = [];
         let datanewcases = [];
         let datanewcases1M = [];
         let dataactive = [];
@@ -255,6 +270,8 @@
         {
             dateaxis = [];
             dataallcases = [];
+            dataallrecovered = [];
+            dataalldeaths = [];
             datanewcases = [];
             datanewcases1M = [];
             dataactive = [];
@@ -263,6 +280,8 @@
             {
                 dateaxis.push(convertDate(allconfirmed[0][i]));
                 dataallcases.push(allconfirmed[confirmedID][i]);
+                dataallrecovered.push(allrecovered[recoveredID][i]);
+                dataalldeaths.push(alldeaths[deathsID][i]);
                 dataactive.push(allconfirmed[confirmedID][i]-allrecovered[recoveredID][i]-alldeaths[deathsID][i]);
                 dataactive1M.push(dataactive[i-4]/(allpopulation[populationID][1]/1000000));
                 if ( i == 4 ) 
