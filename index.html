@@ -29,8 +29,8 @@
         GitHub</a>.
     </p>
 
-    <label for="countryselector">Choose a country:</label>
-    <select name="countryselector" id="countryselector" onchange="countrySelectorChanged(value)">
+    <label for="CountrySelector">Choose a country:</label>
+    <select name="CountrySelector" id="CountrySelector" onchange="selectorChanged()">
         <option value="Hungary">Hungary</option>
         <option value="Austria">Austria</option>
         <option value="Slovakia">Slovakia</option>
@@ -45,22 +45,36 @@
         <option value="France">France</option>
     </select>
 
-    <label for="chartselector">Choose a chart:</label>
-    <select name="chartselector" id="chartselector" onchange="chartselectorChanged(value)">
-        <option value="ActiveCases">Active Cases</option>
-        <option value="ActiveCases1M">Active Cases / 1 Million</option>
+    <label for="ChartSelector">Choose a chart:</label>
+    <select name="ChartSelector" id="ChartSelector" onchange="selectorChanged()">
+        <option value="Confirmed">Confirmed</option>
+        <option value="Recovered">Recovered</option>
+        <option value="Deaths">Deaths</option>
         <option value="NewCases">New Cases</option>
         <option value="NewCases1M">New Cases / 1 Million</option>
-<!--        <option value="Romania">Romania</option>
-        <option value="Serbia">Serbia</option>
-        <option value="Croatia">Croatia</option>
-        <option value="Slovenia">Slovenia</option>
-        <option value="Germany">Germany</option>
-        <option value="Italy">Italy</option>
-        <option value="Spain">Spain</option>
-        <option value="France">France</option> -->
+        <option value="ActiveCases">Active Cases</option>
+        <option value="ActiveCases1M">Active Cases / 1 Million</option>
     </select>
 
+    <label for="ChartTypeSelector">Y Axis type:</label>
+    <select name="ChartTypeSelector" id="ChartTypeSelector" onchange="selectorChanged()">
+        <option value="Fixed">Fixed</option>
+        <option value="Automatic">Automatic</option>
+    </select>
+
+    <label for="ChartRangeSelector" id="ChartRangeSelectorLabel">Choose maximum of Y Axis:</label>
+    <select name="ChartRangeSelector" id="ChartRangeSelector" onchange="selectorChanged()">
+        <option value="100">100</option>
+        <option value="200">200</option>
+        <option value="300">300</option>
+        <option value="500">500</option>
+        <option value="800">800</option>
+        <option value="100">1000</option>
+        <option value="200">2000</option>
+        <option value="300">3000</option>
+        <option value="500">5000</option>
+        <option value="800">8000</option>
+    </select>
 
     <p><span id="startdate"></span> - <span id="enddate"></span></p>
 
@@ -93,15 +107,11 @@
             await convertStringToArray(rawdeaths, alldeaths);
             await convertStringToArray(rawpopulation, allpopulation);
 
-            let e = document.getElementById("countryselector");
-            countrySelectorChanged(e.options[e.selectedIndex].value);
+            selectorChanged();
             
             document.getElementById("startdate").innerHTML = convertDate(allconfirmed[0][4]);
             document.getElementById("enddate").innerHTML = convertDate(allconfirmed[0][allconfirmed[0].length-1]);
 //*/
-
-
-
         });
 
         function convertDate(date)
@@ -142,11 +152,32 @@
             }
         }
 
-        function countrySelectorChanged(value)
+        function getSelectValue(selectname)
         {
-            country = value;
-            lookForIDs(country);
+            var e = document.getElementById(selectname);
+            var strUser = e.options[e.selectedIndex].value;
+            return strUser;
+        }
 
+        function selectorChanged()
+        {
+            country    = getSelectValue("CountrySelector");
+            chart      = getSelectValue("ChartSelector");
+            charttype  = getSelectValue("ChartTypeSelector");
+            chartrange = getSelectValue("ChartRangeSelector");
+
+            if (charttype == "Fixed")
+            {
+                document.getElementById("ChartRangeSelector").hidden = false;
+                document.getElementById("ChartRangeSelectorLabel").hidden = false;
+            } else {
+                document.getElementById("ChartRangeSelector").hidden = true;
+                document.getElementById("ChartRangeSelectorLabel").hidden = true;
+            }
+
+            myChart = null;
+
+            lookForIDs(country);
             prepareDataForChart(country);
 
             var ctx = document.getElementById('myChart').getContext('2d');
@@ -166,18 +197,15 @@
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true,
-                                max: 5000,
+                                max: 1000,
                                 min: 0
                             }
                         }]
                     }
                 }
             });
-        }
 
-        function chartselectorChanged(value)
-        {
-            charttype = value;
+            myChart.update();
         }
 
         function lookForIDs(country) 
