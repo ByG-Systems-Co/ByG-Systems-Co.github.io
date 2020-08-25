@@ -203,12 +203,13 @@
             {
                 document.getElementById("ChartRangeSelector").hidden = false;
                 document.getElementById("ChartRangeSelectorLabel").hidden = false;
-                document.getElementById("ChartTypeSelectorLabel").hidden = true;
-                document.getElementById("ChartTypeSelector").hidden = true;
+//                document.getElementById("ChartTypeSelectorLabel").hidden = true;
+//                document.getElementById("ChartTypeSelector").hidden = true;
                 myChart.options.scales.yAxes[0].ticks.max = parseInt(chartrange);
             } else {
                 document.getElementById("ChartRangeSelector").hidden = true;
                 document.getElementById("ChartRangeSelectorLabel").hidden = true;
+                updateConfigAsNewObject(myChart);
             }
 
             lookForIDs(country);
@@ -254,6 +255,20 @@
             myChart.update();
         }
         
+        function updateConfigAsNewObject(chart) 
+        {
+            chart.options = {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+            chart.update();
+        }
+
         function lookForIDs(country) 
         {
             for (let i = 0; i < allconfirmed.length; i++)  if (allconfirmed[i][1]  == country) confirmedID = i;
