@@ -67,19 +67,8 @@
         <option value="Fixed">Fixed (for the comparison)</option>
     </select>
 
-    <label for="ChartRangeSelector" id="ChartRangeSelectorLabel">Choose maximum of Y Axis:</label>
-    <select name="ChartRangeSelector" id="ChartRangeSelector" onchange="selectorChanged()">
-        <option value="100">100</option>
-        <option value="200">200</option>
-        <option value="300">300</option>
-        <option value="500">500</option>
-        <option value="800">800</option>
-        <option value="1300" selected="selected">1300</option>
-        <option value="2100">2100</option>
-        <option value="3400">3400</option>
-        <option value="5500">5500</option>
-        <option value="8900">8900</option>
-    </select>
+    <label for="ChartRange" id="ChartRangeLabel">Choose maximum of Y Axis:</label>
+    <input id="ChartRange" onchange="selectorChanged()"> 
 
     <p><span id="startdate"></span> - <span id="enddate"></span></p>
 
@@ -197,18 +186,12 @@
             country    = getSelectValue("CountrySelector");
             chart      = getSelectValue("ChartSelector");
             charttype  = getSelectValue("ChartTypeSelector");
-            chartrange = getSelectValue("ChartRangeSelector");
+            chartrange = document.getElementById("ChartRange").value;
 
             if (charttype == "Fixed")
             {
-                document.getElementById("ChartRangeSelector").hidden = false;
-                document.getElementById("ChartRangeSelectorLabel").hidden = false;
-//                document.getElementById("ChartTypeSelectorLabel").hidden = true;
-//                document.getElementById("ChartTypeSelector").hidden = true;
                 myChart.options.scales.yAxes[0].ticks.max = parseInt(chartrange);
             } else {
-                document.getElementById("ChartRangeSelector").hidden = true;
-                document.getElementById("ChartRangeSelectorLabel").hidden = true;
                 updateConfigAsNewObject(myChart);
             }
 
@@ -276,6 +259,34 @@
             for (let i = 0; i < alldeaths.length; i++)     if (alldeaths[i][1]     == country) deathsID = i;
             for (let i = 0; i < allpopulation.length; i++) if (allpopulation[i][0] == country) populationID = i;
         }
+
+        // Restricts input for the given textbox to the given inputFilter.
+        function setInputFilter(textbox, inputFilter) 
+        {
+            ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) 
+            {
+                textbox.addEventListener(event, function() 
+                {
+                    if (inputFilter(this.value)) 
+                    {
+                        this.oldValue = this.value;
+                        this.oldSelectionStart = this.selectionStart;
+                        this.oldSelectionEnd = this.selectionEnd;
+                    } else if (this.hasOwnProperty("oldValue")) {
+                        this.value = this.oldValue;
+                        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                    } else {
+                        this.value = "";
+                    }
+                });
+            });
+        }
+
+        setInputFilter(document.getElementById("ChartRange"), function(value) 
+        {
+            return /^\d*$/.test(value); 
+        });
+
 
         let dateaxis = [];
         let dataallcases = [];
