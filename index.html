@@ -67,7 +67,7 @@
         <option value="Fixed">Fixed (for the comparison)</option>
     </select>
 
-    <label for="ChartRange" id="ChartRangeLabel">Choose maximum of Y Axis:</label>
+    <label for="ChartRange" id="ChartRangeLabel">Choose the maximum of Y Axis:</label>
     <input id="ChartRange" onchange="selectorChanged()"> 
 
     <p><span id="startdate"></span> - <span id="enddate"></span></p>
@@ -103,7 +103,6 @@
                     backgroundColor: 'rgba(255, 0, 0, 1)'
                 }]
             },
-//*
             options: {
                 scales: {
                     yAxes: [{
@@ -113,7 +112,6 @@
                     }]
                 }
             }
-//*/
         });
 
         $(document).ready(async function () 
@@ -286,7 +284,6 @@
         {
             return /^\d*$/.test(value); 
         });
-
 
         let dateaxis = [];
         let dataallcases = [];
