@@ -3,8 +3,6 @@ let firstrun = true;
 
 function displayWindowSize()
 {
-    console.log("Window is resized")
-    //*    
     var currentWindowHeight = $(window).height()
     var canvas = document.getElementById("myChartID")
     var chartHeight = currentWindowHeight - 220;
@@ -15,7 +13,6 @@ function displayWindowSize()
         myChart.update();
     else
         firstrun = false;
-    //*/
 }
 
 document.addEventListener('DOMContentLoaded', function(event) {
@@ -39,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
             responsive: true,
             // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
             maintainAspectRatio: false,
-            scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
             scales: {
                 yAxes: [{
                     ticks: {
@@ -184,7 +180,7 @@ function updateConfigAsNewObject(chart)
         responsive: true,
         // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
         maintainAspectRatio: false,
-        scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
+//        scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
         scales: {
             yAxes: [{
                 ticks: {
