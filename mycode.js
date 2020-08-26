@@ -7,11 +7,10 @@ function displayWindowSize()
     //*    
     var currentWindowHeight = $(window).height()
     var canvas = document.getElementById("myChartID")
-    var chartHeight = currentWindowHeight - 220
+    var chartHeight = currentWindowHeight - 220;
     var lineChartParent = document.getElementById('innerbox')
     canvas.width = lineChartParent.clientWidth;
     canvas.height = chartHeight;
-
     if (!firstrun)
         myChart.update();
     else
