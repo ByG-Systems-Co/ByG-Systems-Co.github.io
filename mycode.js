@@ -1,6 +1,27 @@
+window.addEventListener("resize", displayWindowSize);
+let firstrun = true;
+
+function displayWindowSize()
+{
+    console.log("Window is resized")
+    //*    
+    var currentWindowHeight = $(window).height()
+    var canvas = document.getElementById("myChartID")
+    var chartHeight = currentWindowHeight - 220
+    var lineChartParent = document.getElementById('innerbox')
+    canvas.width = lineChartParent.clientWidth;
+    canvas.height = chartHeight;
+
+    if (!firstrun)
+        myChart.update();
+    else
+        firstrun = false;
+    //*/
+}
+
 document.addEventListener('DOMContentLoaded', function(event) {
     //the event occurred
-
+    displayWindowSize();
 
     ctx = document.getElementById('myChartID').getContext('2d'); // Chart Data Set
 
@@ -19,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
             responsive: true,
             // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
             maintainAspectRatio: false,
+            scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
             scales: {
                 yAxes: [{
                     ticks: {
@@ -151,6 +173,7 @@ function selectorChanged()
             break;
     }
 
+    displayWindowSize();
     myChart.data.labels = dateaxis;
     myChart.update();
 }
@@ -158,10 +181,11 @@ function selectorChanged()
 function updateConfigAsNewObject(chart) 
 {
     chart.options = {
-                    // Boolean - whether or not the chart should be responsive and resize when the browser does.
-                    responsive: true,
-                    // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-                    maintainAspectRatio: false,
+        // Boolean - whether or not the chart should be responsive and resize when the browser does.
+        responsive: true,
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio: false,
+        scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
         scales: {
             yAxes: [{
                 ticks: {
