@@ -15,6 +15,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
             }]
         },
         options: {
+            // Boolean - whether or not the chart should be responsive and resize when the browser does.
+            responsive: true,
+            // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+            maintainAspectRatio: false,
             scales: {
                 yAxes: [{
                     ticks: {
@@ -154,6 +158,10 @@ function selectorChanged()
 function updateConfigAsNewObject(chart) 
 {
     chart.options = {
+                    // Boolean - whether or not the chart should be responsive and resize when the browser does.
+                    responsive: true,
+                    // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+                    maintainAspectRatio: false,
         scales: {
             yAxes: [{
                 ticks: {
