@@ -1,72 +1,137 @@
-window.addEventListener("resize", displayWindowSize);
-let firstrun = true;
+let conf;
+let allconfirmed = [];
+let allconfirmedReady = false;
+let allrecovered = [];
+let allrecoveredReady = false;
+let alldeaths = [];
+let alldeathsReady = false;
+let allpopulation = [];
+let allpopulationReady = false;
+let DOMReady = false;
 
-function displayWindowSize()
-{
-    var currentWindowHeight = $(window).height()
-    var canvas = document.getElementById("myChartID")
-    var chartHeight = currentWindowHeight - 220;
-    var lineChartParent = document.getElementById('innerbox')
-    canvas.width = lineChartParent.clientWidth;
-    canvas.height = chartHeight;
-    if (!firstrun)
-        myChart.update();
-    else
-        firstrun = false;
-}
+let myChart;
+let ctx;
 
-document.addEventListener('DOMContentLoaded', function(event) {
-    //the event occurred
-    displayWindowSize();
-
-    ctx = document.getElementById('myChartID').getContext('2d'); // Chart Data Set
-
-    myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [],
-            datasets: [{
-                label: "Dummy Chart",
-                data: [],
-                backgroundColor: 'rgba(255, 0, 0, 1)'
+ctx = document.getElementById('myChartID').getContext('2d'); // Chart Data Set
+    
+myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: "Dummy Chart",
+            data: [],
+            backgroundColor: 'rgba(255, 0, 0, 1)'
+        }]
+    },
+    options: {
+        // Boolean - whether or not the chart should be responsive and resize when the browser does.
+        responsive: true,
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
             }]
-        },
-        options: {
-            // Boolean - whether or not the chart should be responsive and resize when the browser does.
-            responsive: true,
-            // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-            maintainAspectRatio: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
         }
-    });
-
+    }
 });
 
-let ctx;
-let mychart;
+setChartSize();
 
-let country = "";
-let charttype = "";
-let rawconfirmed = "";
-let rawrecovered = "";
-let rawdeaths = "";
-let rawpopulation = "";
-let allconfirmed = [];
-let allrecovered = [];
-let alldeaths = [];
-let allpopulation = [];
+fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+    .then(response => response.text())
+    .then((csv) => {
+        let lines = csv.split(/\r\n|\n/);
+        for (let i = 0; i < lines.length; i++ )
+            allconfirmed.push(lines[i].split(','));
 
-let confirmedID = "";
-let recoveredID = "";
-let deathsID = "";
-let populationID = "";
+        for (let i = 4; i < allconfirmed[0].length; i++)
+            allconfirmed[0][i] = convertDate(allconfirmed[0][i]);
 
+        for ( let i = 1; i < allconfirmed.length - 1; i++ )
+        {
+            if ( allconfirmed[i][1] == allconfirmed[i+1][1] )
+            {
+                for (let j = 4; j < allconfirmed[i].length; j++)
+                    allconfirmed[i][j] = parseInt(allconfirmed[i][j]) + parseInt(allconfirmed[i+1][j]);
+                allconfirmed.splice(i+1, 1);
+                i--;
+            } else {
+                for (let j = 4; j < allconfirmed[i].length; j++)
+                    allconfirmed[i][j] = parseInt(allconfirmed[i][j]);
+            }
+        }
+        allconfirmedReady = true;
+        isDataLoaded();
+});
+
+fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv")
+    .then(response => response.text())
+    .then((csv) => {
+        let lines = csv.split(/\r\n|\n/);
+        for (let i = 0; i < lines.length; i++ )
+            allrecovered.push(lines[i].split(','));
+
+        for (let i = 4; i < allrecovered[0].length; i++)
+            allrecovered[0][i] = convertDate(allrecovered[0][i]);
+
+        for ( let i = 1; i < allrecovered.length - 1; i++ )
+        {
+            if ( allrecovered[i][1] == allrecovered[i+1][1] )
+            {
+                for (let j = 4; j < allrecovered[i].length; j++)
+                    allrecovered[i][j] = parseInt(allrecovered[i][j]) + parseInt(allrecovered[i+1][j]);
+                allrecovered.splice(i+1, 1);
+                i--;
+            } else {
+                for (let j = 4; j < allrecovered[i].length; j++)
+                    allrecovered[i][j] = parseInt(allrecovered[i][j]);
+            }
+        }
+        allrecoveredReady = true;
+        isDataLoaded();
+});
+
+fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
+    .then(response => response.text())
+    .then((csv) => {
+        let lines = csv.split(/\r\n|\n/);
+        for (let i = 0; i < lines.length; i++ )
+            alldeaths.push(lines[i].split(','));
+
+        for (let i = 4; i < alldeaths[0].length; i++)
+            alldeaths[0][i] = convertDate(alldeaths[0][i]);
+
+        for ( let i = 1; i < alldeaths.length - 1; i++ )
+        {
+            if ( alldeaths[i][1] == alldeaths[i+1][1] )
+            {
+                for (let j = 4; j < alldeaths[i].length; j++)
+                    alldeaths[i][j] = parseInt(alldeaths[i][j]) + parseInt(alldeaths[i+1][j]);
+                alldeaths.splice(i+1, 1);
+                i--;
+            } else {
+                for (let j = 4; j < alldeaths[i].length; j++)
+                    alldeaths[i][j] = parseInt(alldeaths[i][j]);
+            }
+        }
+        alldeathsReady = true;
+        isDataLoaded();
+});
+
+fetch("population.csv")
+    .then(response => response.text())
+    .then((csv) => {
+        let lines = csv.split(/\r\n|\n/);
+        for (let i = 0; i < lines.length; i++ )
+            allpopulation.push(lines[i].split(','));
+
+        allpopulationReady = true;
+        isDataLoaded();
+});
 
 function convertDate(date)
 {
@@ -75,52 +140,32 @@ function convertDate(date)
     return retval;
 }
 
-async function loadData(v_url) 
+function isDataLoaded() 
 {
-    try {
-        var v_array = await getText(v_url);
-        if (0 <= v_url.search("confirmed"))  { rawconfirmed  = v_array; }
-        if (0 <= v_url.search("recovered"))  { rawrecovered  = v_array; }
-        if (0 <= v_url.search("deaths"))     { rawdeaths     = v_array; }
-        if (0 <= v_url.search("population")) { rawpopulation = v_array; }
-    }
-    catch{
-        console.log(error);
-    }
-}
-
-function getText(v_url) 
-{
-    var data = jQuery.get(v_url, function(data) 
+    if( allconfirmedReady & alldeathsReady & allrecoveredReady & allpopulationReady )
     {
-        return data;
-    });
-    return data;
-}
+//        console.log("All external Data is loaded");
+        document.getElementById("startdate").innerHTML = allconfirmed[0][4];
+        document.getElementById("enddate").innerHTML = allconfirmed[0][allconfirmed[0].length-1];
 
-function convertStringToArray(string, array)
-{
-    let lines = string.split(/\r\n|\n/);
-    for (let i = 0; i < lines.length; i++ )
-    {
-        let data = lines[i].split(',');
-        array.push(data);
+        selectorChanged();
     }
 }
 
-function getSelectValue(selectname)
+function drawChart(myChart, country, chart, charttype, chartrange)
 {
-    var e = document.getElementById(selectname);
-    var strUser = e.options[e.selectedIndex].value;
-    return strUser;
-}
+//    setChartSize();
 
-function selectorChanged()
-{
-    country    = getSelectValue("CountrySelector");
-    chart      = getSelectValue("ChartSelector");
-    charttype  = getSelectValue("ChartTypeSelector");
-    chartrange = document.getElementById("ChartRange").value;
+    let confirmedID = 0;
+    let recoveredID = 0;
+    let deathsID = 0;
+    let populationID = 0;
+
+    // look for IDs:
+    for (let i = 0; i < allconfirmed.length; i++)  if (allconfirmed[i][1]  == country) confirmedID = i;
+    for (let i = 0; i < allrecovered.length; i++)  if (allrecovered[i][1]  == country) recoveredID = i;
+    for (let i = 0; i < alldeaths.length; i++)     if (alldeaths[i][1]     == country) deathsID = i;
+    for (let i = 0; i < allpopulation.length; i++) if (allpopulation[i][0] == country) populationID = i;
 
     if (charttype == "Fixed")
     {
@@ -129,47 +174,76 @@ function selectorChanged()
         updateConfigAsNewObject(myChart);
     }
 
-    lookForIDs(country);
-    prepareDataForChart(country);
+    myChart.data.labels = [];
+    myChart.data.datasets[0].data = [];
 
-    switch(chart)
+    for (let i = 4; i < allconfirmed[confirmedID].length; i++)
     {
-        case "Confirmed":
-            myChart.data.datasets[0].data = dataallcases; 
-            myChart.data.datasets[0].label = "Confirmed Cases in " + country;
-            break;
-        case "Recovered":
-            myChart.data.datasets[0].data = dataallrecovered;  
-            myChart.data.datasets[0].label = "Recovered Cases in " + country;
-            break;
-        case "Deaths":
-            myChart.data.datasets[0].data = dataalldeaths;  
-            myChart.data.datasets[0].label = "Deaths in " + country;
-            break;
-        case "NewCases":
-            myChart.data.datasets[0].data = datanewcases;  
-            myChart.data.datasets[0].label = "New Cases in " + country;
-            break;
-        case "NewCases1M":
-            myChart.data.datasets[0].data = datanewcases1M;  
-            myChart.data.datasets[0].label = "New Cases / 1 Million in " + country;
-            break;
-        case "ActiveCases":
-            myChart.data.datasets[0].data = dataactive;  
-            myChart.data.datasets[0].label = "Active Cases in " + country;
-            break;
-        case "ActiveCases1M":
-            myChart.data.datasets[0].data = dataactive1M;  
-            myChart.data.datasets[0].label = "Active Cases / 1 Million in " + country;
-            break;
-        default:
-            myChart.data.datasets[0].data = datanewcases;  
-            myChart.data.datasets[0].label = "Should never occure...";
-            break;
+        myChart.data.labels.push((allconfirmed[0][i]));
+
+        switch(chart)
+        {
+            case "Confirmed":
+                myChart.data.datasets[0].data.push((allconfirmed[confirmedID][i]));
+                myChart.data.datasets[0].label = "Confirmed Cases in " + country;
+                break;
+            case "Recovered":
+                myChart.data.datasets[0].data.push((allrecovered[recoveredID][i]));
+                myChart.data.datasets[0].label = "Recovered Cases in " + country;
+                break;
+            case "Deaths":
+                myChart.data.datasets[0].data.push((alldeaths[deathsID][i]));
+                myChart.data.datasets[0].label = "Deaths in " + country;
+                break;
+            case "NewCases":
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "New Cases in " + country;
+                break;
+            case "NewCases1M":
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(
+                        ( allconfirmed[confirmedID][i] - allconfirmed[confirmedID][i-1] ) / allpopulation[populationID][1] * 1000000
+                    );
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "New Cases / 1 Million in " + country;
+                break;
+            case "ActiveCases":
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(
+                        ( allconfirmed[confirmedID][i] - allrecovered[recoveredID][i] - alldeaths[deathsID][i] )
+                    );
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Active Cases in " + country;
+                break;
+            case "ActiveCases1M":
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(
+                        ( allconfirmed[confirmedID][i] - allrecovered[recoveredID][i] - alldeaths[deathsID][i] ) / allpopulation[populationID][1] * 1000000
+                    );
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Active Cases / 1 Million in " + country;
+                break;
+            default:
+                myChart.data.datasets[0].label = "Should never occure...";
+                break; 
+        }
     }
 
-    displayWindowSize();
-    myChart.data.labels = dateaxis;
+//    setChartSize();
     myChart.update();
 }
 
@@ -180,7 +254,7 @@ function updateConfigAsNewObject(chart)
         responsive: true,
         // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
         maintainAspectRatio: false,
-//        scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
+//        scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "  ");},
         scales: {
             yAxes: [{
                 ticks: {
@@ -192,12 +266,21 @@ function updateConfigAsNewObject(chart)
     chart.update();
 }
 
-function lookForIDs(country) 
+function selectorChanged()
 {
-    for (let i = 0; i < allconfirmed.length; i++)  if (allconfirmed[i][1]  == country) confirmedID = i;
-    for (let i = 0; i < allrecovered.length; i++)  if (allrecovered[i][1]  == country) recoveredID = i;
-    for (let i = 0; i < alldeaths.length; i++)     if (alldeaths[i][1]     == country) deathsID = i;
-    for (let i = 0; i < allpopulation.length; i++) if (allpopulation[i][0] == country) populationID = i;
+    let country    = getSelectValue("CountrySelector");
+    let chart      = getSelectValue("ChartSelector");
+    let charttype  = getSelectValue("ChartTypeSelector");
+    let chartrange = document.getElementById("ChartRange").value;
+
+    drawChart(myChart, country, chart, charttype, chartrange);
+}
+
+function getSelectValue(selectname)
+{
+    var e = document.getElementById(selectname);
+    var strUser = e.options[e.selectedIndex].value;
+    return strUser;
 }
 
 // Restricts input for the given textbox to the given inputFilter.
@@ -227,62 +310,20 @@ setInputFilter(document.getElementById("ChartRange"), function(value)
     return /^\d*$/.test(value); 
 });
 
-let dateaxis = [];
-let dataallcases = [];
-let dataallrecovered = [];
-let dataalldeaths = [];
-let datanewcases = [];
-let datanewcases1M = [];
-let dataactive = [];
-let dataactive1M = [];
+window.addEventListener("resize", setChartSize);
 
-function prepareDataForChart(country)
+function setChartSize()
 {
-    dateaxis = [];
-    dataallcases = [];
-    dataallrecovered = [];
-    dataalldeaths = [];
-    datanewcases = [];
-    datanewcases1M = [];
-    dataactive = [];
-    dataactive1M = [];
-    for( let i = 4; i < allconfirmed[0].length; i++)
-    {
-        dateaxis.push(convertDate(allconfirmed[0][i]));
-        dataallcases.push(allconfirmed[confirmedID][i]);
-        dataallrecovered.push(allrecovered[recoveredID][i]);
-        dataalldeaths.push(alldeaths[deathsID][i]);
-        dataactive.push(allconfirmed[confirmedID][i]-allrecovered[recoveredID][i]-alldeaths[deathsID][i]);
-        dataactive1M.push(dataactive[i-4]/(allpopulation[populationID][1]/1000000));
-        if ( i == 4 ) 
-        {
-            datanewcases.push(0);
-            datanewcases1M.push(0);
-        } else {
-            datanewcases.push(allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]);
-            datanewcases1M.push((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1])/(allpopulation[populationID][1]/1000000));
-        }
-    }
-}
-
-$(document).ready(async function () 
-{
-    await loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
-    await loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
-    await loadData("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
-    await loadData("population.csv");
-
-    await convertStringToArray(rawconfirmed, allconfirmed);
-    await convertStringToArray(rawrecovered, allrecovered);
-    await convertStringToArray(rawdeaths, alldeaths);
-    await convertStringToArray(rawpopulation, allpopulation);
-
-    selectorChanged();
+//    console.log($(window).width() + " x " + $(window).height());
+    let rect = document.getElementById("myChartID").getBoundingClientRect();
+//    console.log(parseInt(rect.top), parseInt(rect.right), parseInt(rect.bottom), parseInt(rect.left));
     
-    document.getElementById("startdate").innerHTML = convertDate(allconfirmed[0][4]);
-    document.getElementById("enddate").innerHTML = convertDate(allconfirmed[0][allconfirmed[0].length-1]);
-});
+    let sollWidth  = $(window).width()  - 40;
+    let sollHeight = $(window).height() - parseInt(rect.top) - 10;
 
-
-
-
+//    document.getElementById("myChartID").style = "display: block; width: " + sollWidth + "px; height: " + sollHeight + "px;"
+    document.getElementById("myChartID").style = "display: block; height: " + sollHeight + "px;"
+    document.getElementById("myChartID").height = sollHeight;
+//    document.getElementById("myChartID").width  = sollWidth;
+//    myChart.update();
+}
