@@ -19,7 +19,7 @@
     <h1>ByG's COVID-19 Visualisation</h1>
     <p>Based on the datasets of CSSEGISandData released on  
         <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series">
-        GitHub</a>.
+        GitHub</a>, dataset range: <span id="startdate"></span> - <span id="enddate"></span>
     </p>
 
     <label for="CountrySelector">Choose a country:</label>
@@ -62,8 +62,6 @@
 
     <label for="ChartRange" id="ChartRangeLabel">Choose the maximum of Y Axis:</label>
     <input id="ChartRange" onchange="selectorChanged()"> 
-
-    <p><span id="startdate"></span> - <span id="enddate"></span></p>
 
     <div id="innerbox"><canvas id="myChartID"></canvas></div>
 </body>

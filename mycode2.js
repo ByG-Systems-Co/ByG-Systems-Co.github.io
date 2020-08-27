@@ -144,7 +144,7 @@ function isDataLoaded()
 {
     if( allconfirmedReady & alldeathsReady & allrecoveredReady & allpopulationReady )
     {
-        console.log("All external Data is loaded");
+//        console.log("All external Data is loaded");
         document.getElementById("startdate").innerHTML = allconfirmed[0][4];
         document.getElementById("enddate").innerHTML = allconfirmed[0][allconfirmed[0].length-1];
 
@@ -154,7 +154,7 @@ function isDataLoaded()
 
 function drawChart(myChart, country, chart, charttype, chartrange)
 {
-    setChartSize();
+//    setChartSize();
 
     let confirmedID = 0;
     let recoveredID = 0;
@@ -243,7 +243,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
         }
     }
 
-
+//    setChartSize();
     myChart.update();
 }
 
@@ -315,13 +315,15 @@ window.addEventListener("resize", setChartSize);
 function setChartSize()
 {
 //    console.log($(window).width() + " x " + $(window).height());
+    let rect = document.getElementById("myChartID").getBoundingClientRect();
+//    console.log(parseInt(rect.top), parseInt(rect.right), parseInt(rect.bottom), parseInt(rect.left));
     
-    let sollWidth  = $(window).width()  -  30;
-    let sollHeight = $(window).height() - 220;
+    let sollWidth  = $(window).width()  - 40;
+    let sollHeight = $(window).height() - parseInt(rect.top) - 10;
 
-    document.getElementById("myChartID").style = "display: block; width: " + sollWidth + "px; height: " + sollHeight + "px;"
+//    document.getElementById("myChartID").style = "display: block; width: " + sollWidth + "px; height: " + sollHeight + "px;"
+    document.getElementById("myChartID").style = "display: block; height: " + sollHeight + "px;"
     document.getElementById("myChartID").height = sollHeight;
-    document.getElementById("myChartID").width  = sollWidth;
-    console.log(document.getElementById("myChartID"));
-    myChart.update();
+//    document.getElementById("myChartID").width  = sollWidth;
+//    myChart.update();
 }
