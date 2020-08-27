@@ -39,6 +39,8 @@ myChart = new Chart(ctx, {
     }
 });
 
+setChartSize();
+
 fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
     .then(response => response.text())
     .then((csv) => {
@@ -150,9 +152,10 @@ function isDataLoaded()
     }
 }
 
-
 function drawChart(myChart, country, chart, charttype, chartrange)
 {
+    setChartSize();
+
     let confirmedID = 0;
     let recoveredID = 0;
     let deathsID = 0;
@@ -164,16 +167,12 @@ function drawChart(myChart, country, chart, charttype, chartrange)
     for (let i = 0; i < alldeaths.length; i++)     if (alldeaths[i][1]     == country) deathsID = i;
     for (let i = 0; i < allpopulation.length; i++) if (allpopulation[i][0] == country) populationID = i;
 
-    //Innen kell folytatnom...
-
     if (charttype == "Fixed")
     {
         myChart.options.scales.yAxes[0].ticks.max = parseInt(chartrange);
     } else {
         updateConfigAsNewObject(myChart);
     }
-
-//    prepareDataForChart(country, confirmedID, recoveredID, deathsID, populationID);
 
     myChart.data.labels = [];
     myChart.data.datasets[0].data = [];
@@ -240,44 +239,12 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 break;
             default:
                 myChart.data.datasets[0].label = "Should never occure...";
-                break;
-                
+                break; 
         }
-
-
-        
     }
+
 
     myChart.update();
-}
-
-function prepareDataForChart(country, confirmedID, recoveredID, deathsID, populationID)
-{
-    dateaxis = [];
-    dataallcases = [];
-    dataallrecovered = [];
-    dataalldeaths = [];
-    datanewcases = [];
-    datanewcases1M = [];
-    dataactive = [];
-    dataactive1M = [];
-    for( let i = 4; i < allconfirmed[0].length; i++)
-    {
-        dateaxis.push((allconfirmed[0][i]));
-        dataallcases.push(allconfirmed[confirmedID][i]);
-        dataallrecovered.push(allrecovered[recoveredID][i]);
-        dataalldeaths.push(alldeaths[deathsID][i]);
-        dataactive.push(allconfirmed[confirmedID][i]-allrecovered[recoveredID][i]-alldeaths[deathsID][i]);
-        dataactive1M.push(dataactive[i-4]/(allpopulation[populationID][1]/1000000));
-        if ( i == 4 ) 
-        {
-            datanewcases.push(0);
-            datanewcases1M.push(0);
-        } else {
-            datanewcases.push(allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]);
-            datanewcases1M.push((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1])/(allpopulation[populationID][1]/1000000));
-        }
-    }
 }
 
 function updateConfigAsNewObject(chart) 
@@ -287,7 +254,7 @@ function updateConfigAsNewObject(chart)
         responsive: true,
         // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
         maintainAspectRatio: false,
-//        scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
+//        scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "  ");},
         scales: {
             yAxes: [{
                 ticks: {
@@ -298,8 +265,6 @@ function updateConfigAsNewObject(chart)
     }
     chart.update();
 }
-
-
 
 function selectorChanged()
 {
@@ -344,3 +309,19 @@ setInputFilter(document.getElementById("ChartRange"), function(value)
 {
     return /^\d*$/.test(value); 
 });
+
+window.addEventListener("resize", setChartSize);
+
+function setChartSize()
+{
+//    console.log($(window).width() + " x " + $(window).height());
+    
+    let sollWidth  = $(window).width()  -  30;
+    let sollHeight = $(window).height() - 220;
+
+    document.getElementById("myChartID").style = "display: block; width: " + sollWidth + "px; height: " + sollHeight + "px;"
+    document.getElementById("myChartID").height = sollHeight;
+    document.getElementById("myChartID").width  = sollWidth;
+    console.log(document.getElementById("myChartID"));
+    myChart.update();
+}
