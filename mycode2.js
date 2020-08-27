@@ -12,6 +12,33 @@ let DOMReady = false;
 let myChart;
 let ctx;
 
+ctx = document.getElementById('myChartID').getContext('2d'); // Chart Data Set
+    
+myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: "Dummy Chart",
+            data: [],
+            backgroundColor: 'rgba(255, 0, 0, 1)'
+        }]
+    },
+    options: {
+        // Boolean - whether or not the chart should be responsive and resize when the browser does.
+        responsive: true,
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+
 fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
     .then(response => response.text())
     .then((csv) => {
@@ -39,7 +66,7 @@ fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_cov
         isDataLoaded();
 });
 
-fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv")
     .then(response => response.text())
     .then((csv) => {
         let lines = csv.split(/\r\n|\n/);
@@ -66,7 +93,7 @@ fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_cov
         isDataLoaded();
 });
 
-fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
     .then(response => response.text())
     .then((csv) => {
         let lines = csv.split(/\r\n|\n/);
@@ -123,6 +150,7 @@ function isDataLoaded()
     }
 }
 
+
 function drawChart(myChart, country, chart, charttype, chartrange)
 {
     let confirmedID = 0;
@@ -130,6 +158,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
     let deathsID = 0;
     let populationID = 0;
 
+    // look for IDs:
     for (let i = 0; i < allconfirmed.length; i++)  if (allconfirmed[i][1]  == country) confirmedID = i;
     for (let i = 0; i < allrecovered.length; i++)  if (allrecovered[i][1]  == country) recoveredID = i;
     for (let i = 0; i < alldeaths.length; i++)     if (alldeaths[i][1]     == country) deathsID = i;
@@ -137,8 +166,138 @@ function drawChart(myChart, country, chart, charttype, chartrange)
 
     //Innen kell folytatnom...
 
+    if (charttype == "Fixed")
+    {
+        myChart.options.scales.yAxes[0].ticks.max = parseInt(chartrange);
+    } else {
+        updateConfigAsNewObject(myChart);
+    }
+
+//    prepareDataForChart(country, confirmedID, recoveredID, deathsID, populationID);
+
+    myChart.data.labels = [];
+    myChart.data.datasets[0].data = [];
+
+    for (let i = 4; i < allconfirmed[confirmedID].length; i++)
+    {
+        myChart.data.labels.push((allconfirmed[0][i]));
+
+        switch(chart)
+        {
+            case "Confirmed":
+                myChart.data.datasets[0].data.push((allconfirmed[confirmedID][i]));
+                myChart.data.datasets[0].label = "Confirmed Cases in " + country;
+                break;
+            case "Recovered":
+                myChart.data.datasets[0].data.push((allrecovered[recoveredID][i]));
+                myChart.data.datasets[0].label = "Recovered Cases in " + country;
+                break;
+            case "Deaths":
+                myChart.data.datasets[0].data.push((alldeaths[deathsID][i]));
+                myChart.data.datasets[0].label = "Deaths in " + country;
+                break;
+            case "NewCases":
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "New Cases in " + country;
+                break;
+            case "NewCases1M":
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(
+                        ( allconfirmed[confirmedID][i] - allconfirmed[confirmedID][i-1] ) / allpopulation[populationID][1] * 1000000
+                    );
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "New Cases / 1 Million in " + country;
+                break;
+            case "ActiveCases":
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(
+                        ( allconfirmed[confirmedID][i] - allrecovered[recoveredID][i] - alldeaths[deathsID][i] )
+                    );
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Active Cases in " + country;
+                break;
+            case "ActiveCases1M":
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(
+                        ( allconfirmed[confirmedID][i] - allrecovered[recoveredID][i] - alldeaths[deathsID][i] ) / allpopulation[populationID][1] * 1000000
+                    );
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Active Cases / 1 Million in " + country;
+                break;
+            default:
+                myChart.data.datasets[0].label = "Should never occure...";
+                break;
+                
+        }
+
+
+        
+    }
+
+    myChart.update();
 }
 
+function prepareDataForChart(country, confirmedID, recoveredID, deathsID, populationID)
+{
+    dateaxis = [];
+    dataallcases = [];
+    dataallrecovered = [];
+    dataalldeaths = [];
+    datanewcases = [];
+    datanewcases1M = [];
+    dataactive = [];
+    dataactive1M = [];
+    for( let i = 4; i < allconfirmed[0].length; i++)
+    {
+        dateaxis.push((allconfirmed[0][i]));
+        dataallcases.push(allconfirmed[confirmedID][i]);
+        dataallrecovered.push(allrecovered[recoveredID][i]);
+        dataalldeaths.push(alldeaths[deathsID][i]);
+        dataactive.push(allconfirmed[confirmedID][i]-allrecovered[recoveredID][i]-alldeaths[deathsID][i]);
+        dataactive1M.push(dataactive[i-4]/(allpopulation[populationID][1]/1000000));
+        if ( i == 4 ) 
+        {
+            datanewcases.push(0);
+            datanewcases1M.push(0);
+        } else {
+            datanewcases.push(allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]);
+            datanewcases1M.push((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1])/(allpopulation[populationID][1]/1000000));
+        }
+    }
+}
+
+function updateConfigAsNewObject(chart) 
+{
+    chart.options = {
+        // Boolean - whether or not the chart should be responsive and resize when the browser does.
+        responsive: true,
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio: false,
+//        scaleLabel: function(label){return label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+    chart.update();
+}
 
 
 
