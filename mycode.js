@@ -65,6 +65,7 @@ fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_cov
             }
         }
         allconfirmedReady = true;
+        console.log("time_series_covid19_confirmed_global.csv is loaded");
         isDataLoaded();
 });
 
@@ -92,6 +93,7 @@ fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_cov
             }
         }
         allrecoveredReady = true;
+        console.log("time_series_covid19_recovered_global.csv is loaded");
         isDataLoaded();
 });
 
@@ -119,6 +121,7 @@ fetch("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_cov
             }
         }
         alldeathsReady = true;
+        console.log("time_series_covid19_deaths_global.csv is loaded");
         isDataLoaded();
 });
 
@@ -130,6 +133,7 @@ fetch("population.csv")
             allpopulation.push(lines[i].split(','));
 
         allpopulationReady = true;
+        console.log("population.csv is loaded");
         isDataLoaded();
 });
 
@@ -144,7 +148,7 @@ function isDataLoaded()
 {
     if( allconfirmedReady & alldeathsReady & allrecoveredReady & allpopulationReady )
     {
-//        console.log("All external Data is loaded");
+        console.log("All external Data is loaded");
         document.getElementById("startdate").innerHTML = allconfirmed[0][4];
         document.getElementById("enddate").innerHTML = allconfirmed[0][allconfirmed[0].length-1];
 
@@ -154,8 +158,6 @@ function isDataLoaded()
 
 function drawChart(myChart, country, chart, charttype, chartrange)
 {
-//    setChartSize();
-
     let confirmedID = 0;
     let recoveredID = 0;
     let deathsID = 0;
@@ -243,7 +245,6 @@ function drawChart(myChart, country, chart, charttype, chartrange)
         }
     }
 
-//    setChartSize();
     myChart.update();
 }
 
@@ -314,16 +315,9 @@ window.addEventListener("resize", setChartSize);
 
 function setChartSize()
 {
-//    console.log($(window).width() + " x " + $(window).height());
     let rect = document.getElementById("myChartID").getBoundingClientRect();
-//    console.log(parseInt(rect.top), parseInt(rect.right), parseInt(rect.bottom), parseInt(rect.left));
-    
-    let sollWidth  = $(window).width()  - 40;
     let sollHeight = $(window).height() - parseInt(rect.top) - 10;
 
-//    document.getElementById("myChartID").style = "display: block; width: " + sollWidth + "px; height: " + sollHeight + "px;"
     document.getElementById("myChartID").style = "display: block; height: " + sollHeight + "px;"
     document.getElementById("myChartID").height = sollHeight;
-//    document.getElementById("myChartID").width  = sollWidth;
-//    myChart.update();
 }
