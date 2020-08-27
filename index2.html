@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <script defer src="mycode2.js"></script>
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+</head>
+
+<body>
+    <h1>ByG's COVID-19 Visualisation</h1>
+    <p>Based on the datasets of CSSEGISandData released on  
+        <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series">
+        GitHub</a>.
+    </p>
+
+    <label for="CountrySelector">Choose a country:</label>
+    <select name="CountrySelector" id="CountrySelector" onchange="selectorChanged()">
+        <option value="Hungary" selected="selected">Hungary</option>
+        <option value="Austria">Austria</option>
+        <option value="Slovakia">Slovakia</option>
+        <option value="Ukraine">Ukraine</option>
+        <option value="Romania">Romania</option>
+        <option value="Serbia">Serbia</option>
+        <option value="Croatia">Croatia</option>
+        <option value="Slovenia">Slovenia</option>
+        <option value="Germany">Germany</option>
+        <option value="Italy">Italy</option>
+        <option value="Spain">Spain</option>
+        <option value="France">France</option>
+        <option value="Netherlands">Netherlands</option>
+        <option value="Belgium">Belgium</option>
+        <option value="Russia">Russia</option>
+        <option value="China">China (partial)</option>
+        <option value="US">USA</option>
+    </select>
+
+    <label for="ChartSelector">Choose a chart:</label>
+    <select name="ChartSelector" id="ChartSelector" onchange="selectorChanged()">
+        <option value="Confirmed">Confirmed   [raw]</option>
+        <option value="Recovered">Recovered   [raw]</option>
+        <option value="Deaths">Deaths   [raw]</option>
+        <option value="NewCases">New Cases</option>
+        <option value="NewCases1M" selected="selected">New Cases / 1 Million</option>
+        <option value="ActiveCases">Active Cases</option>
+        <option value="ActiveCases1M">Active Cases / 1 Million</option>
+    </select>
+
+    <label for="ChartTypeSelector" id="ChartTypeSelectorLabel">Y Axis type:</label>
+    <select name="ChartTypeSelector" id="ChartTypeSelector" onchange="selectorChanged()">
+        <option value="Automatic">Automatic (for the details)</option>
+        <option value="Fixed">Fixed (for the comparison)</option>
+    </select>
+
+    <label for="ChartRange" id="ChartRangeLabel">Choose the maximum of Y Axis:</label>
+    <input id="ChartRange" onchange="selectorChanged()"> 
+
+    <p><span id="startdate"></span> - <span id="enddate"></span></p>
+
+    <div id="innerbox"><canvas id="myChartID" width="1024" height="468"></canvas></div>
+</body>
+</html>
