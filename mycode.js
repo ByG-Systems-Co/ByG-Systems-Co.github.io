@@ -22,7 +22,11 @@ myChart = new Chart(ctx, {
             label: "Dummy Chart",
             data: [],
             backgroundColor: 'rgba(255, 0, 0, 1)'
-        }]
+/*        },{
+            label: "Dummy Chart 2",
+            data: [],
+            backgroundColor: 'rgba(0, 0, 255, 1)'            
+*/        }]
     },
     options: {
         // Boolean - whether or not the chart should be responsive and resize when the browser does.
@@ -178,6 +182,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
 
     myChart.data.labels = [];
     myChart.data.datasets[0].data = [];
+//    myChart.data.datasets[1].data = [];
 
     for (let i = 4; i < allconfirmed[confirmedID].length; i++)
     {
@@ -212,7 +217,10 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                     myChart.data.datasets[0].data.push(
                         ( allconfirmed[confirmedID][i] - allconfirmed[confirmedID][i-1] ) / allpopulation[populationID][1] * 1000000
                     );
-                } else {
+/*                    myChart.data.datasets[1].data.push(
+                        ( allconfirmed[confirmedID][i] - allconfirmed[confirmedID][i-1] ) / allpopulation[populationID][1] * 500000
+                    );
+*/                } else {
                     myChart.data.datasets[0].data.push(0);
                 }
                 myChart.data.datasets[0].label = "New Cases / 1 Million in " + country;
