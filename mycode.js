@@ -203,9 +203,28 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 myChart.data.datasets[0].label = "Deaths in " + country;
                 break;
             case "NewCases":
+            case "ConfirmedDaily":    
                 if ( i != 4 )
                 {   
                     myChart.data.datasets[0].data.push(allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "New Cases in " + country;
+                break;
+            case "RecoveredDaily":    
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(allrecovered[recoveredID][i]-allrecovered[recoveredID][i-1]);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "New Cases in " + country;
+                break;
+            case "DeathsDaily":    
+                if ( i != 4 )
+                {   
+                    myChart.data.datasets[0].data.push(alldeaths[deathsID][i]-alldeaths[deathsID][i-1]);
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
@@ -217,10 +236,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                     myChart.data.datasets[0].data.push(
                         ( allconfirmed[confirmedID][i] - allconfirmed[confirmedID][i-1] ) / allpopulation[populationID][1] * 1000000
                     );
-/*                    myChart.data.datasets[1].data.push(
-                        ( allconfirmed[confirmedID][i] - allconfirmed[confirmedID][i-1] ) / allpopulation[populationID][1] * 500000
-                    );
-*/                } else {
+               } else {
                     myChart.data.datasets[0].data.push(0);
                 }
                 myChart.data.datasets[0].label = "New Cases / 1 Million in " + country;
@@ -247,6 +263,37 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 }
                 myChart.data.datasets[0].label = "Active Cases / 1 Million in " + country;
                 break;
+
+            case "ConfirmedMA":    
+                if ( i > (4+14) )
+                {   
+                    myChart.data.datasets[0].data.push((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-13])/14);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Confirmed 14-day Moving Average " + country;
+                break;
+
+            case "RecoveredMA":    
+                if ( i > (4+14) )
+                {   
+                    myChart.data.datasets[0].data.push((allrecovered[recoveredID][i]-allrecovered[recoveredID][i-13])/14);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Confirmed 14-day Moving Average " + country;
+                break;
+
+            case "DeathsMA":    
+                if ( i > (4+14) )
+                {   
+                    myChart.data.datasets[0].data.push((alldeaths[deathsID][i]-alldeaths[deathsID][i-13])/14);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Confirmed 14-day Moving Average " + country;
+                break;
+
             default:
                 myChart.data.datasets[0].label = "Should never occure...";
                 break; 
