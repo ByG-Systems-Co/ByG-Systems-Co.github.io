@@ -281,7 +281,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
-                myChart.data.datasets[0].label = "Recovered 14-day Moving Average " + country;
+                myChart.data.datasets[0].label = "Recovered  14-day Moving Average " + country;
                 break;
 
             case "DeathsMA":    
