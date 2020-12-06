@@ -160,12 +160,13 @@ function isDataLoaded()
     }
 }
 
-function drawChart(myChart, country, chart, charttype, chartrange)
+function drawChart(myChart, country, chart, charttype, chartrange, chartnorm)
 {
     let confirmedID = 0;
     let recoveredID = 0;
     let deathsID = 0;
     let populationID = 0;
+    let norm = 1;
 
     // look for IDs:
     for (let i = 0; i < allconfirmed.length; i++)  if (allconfirmed[i][1]  == country) confirmedID = i;
@@ -180,6 +181,13 @@ function drawChart(myChart, country, chart, charttype, chartrange)
         updateConfigAsNewObject(myChart);
     }
 
+    if(chartnorm!="Off")
+    {
+        norm = 1000000 / allpopulation[populationID][1];
+    } else {
+        norm = 1;
+    }
+
     myChart.data.labels = [];
     myChart.data.datasets[0].data = [];
 //    myChart.data.datasets[1].data = [];
@@ -191,22 +199,21 @@ function drawChart(myChart, country, chart, charttype, chartrange)
         switch(chart)
         {
             case "Confirmed":
-                myChart.data.datasets[0].data.push((allconfirmed[confirmedID][i]));
+                myChart.data.datasets[0].data.push((allconfirmed[confirmedID][i]) * norm);
                 myChart.data.datasets[0].label = "Confirmed Cases in " + country;
                 break;
             case "Recovered":
-                myChart.data.datasets[0].data.push((allrecovered[recoveredID][i]));
+                myChart.data.datasets[0].data.push((allrecovered[recoveredID][i]) * norm);
                 myChart.data.datasets[0].label = "Recovered Cases in " + country;
                 break;
             case "Deaths":
-                myChart.data.datasets[0].data.push((alldeaths[deathsID][i]));
+                myChart.data.datasets[0].data.push((alldeaths[deathsID][i]) * norm);
                 myChart.data.datasets[0].label = "Deaths in " + country;
                 break;
-            case "NewCases":
             case "ConfirmedDaily":    
                 if ( i != 4 )
                 {   
-                    myChart.data.datasets[0].data.push(allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]);
+                    myChart.data.datasets[0].data.push((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-1]) * norm);
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
@@ -215,7 +222,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
             case "RecoveredDaily":    
                 if ( i != 4 )
                 {   
-                    myChart.data.datasets[0].data.push(allrecovered[recoveredID][i]-allrecovered[recoveredID][i-1]);
+                    myChart.data.datasets[0].data.push((allrecovered[recoveredID][i]-allrecovered[recoveredID][i-1]) * norm);
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
@@ -224,50 +231,48 @@ function drawChart(myChart, country, chart, charttype, chartrange)
             case "DeathsDaily":    
                 if ( i != 4 )
                 {   
-                    myChart.data.datasets[0].data.push(alldeaths[deathsID][i]-alldeaths[deathsID][i-1]);
+                    myChart.data.datasets[0].data.push((alldeaths[deathsID][i]-alldeaths[deathsID][i-1]) * norm);
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
                 myChart.data.datasets[0].label = "Deaths Daily in " + country;
                 break;
-            case "NewCases1M":
-                if ( i != 4 )
-                {   
-                    myChart.data.datasets[0].data.push(
-                        ( allconfirmed[confirmedID][i] - allconfirmed[confirmedID][i-1] ) / allpopulation[populationID][1] * 1000000
-                    );
-               } else {
-                    myChart.data.datasets[0].data.push(0);
-                }
-                myChart.data.datasets[0].label = "New Cases / 1 Million in " + country;
-                break;
             case "ActiveCases":
                 if ( i != 4 )
                 {   
                     myChart.data.datasets[0].data.push(
-                        ( allconfirmed[confirmedID][i] - allrecovered[recoveredID][i] - alldeaths[deathsID][i] )
+                        ( allconfirmed[confirmedID][i] - allrecovered[recoveredID][i] - alldeaths[deathsID][i] ) * norm
                     );
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
                 myChart.data.datasets[0].label = "Active Cases in " + country;
                 break;
-            case "ActiveCases1M":
-                if ( i != 4 )
-                {   
-                    myChart.data.datasets[0].data.push(
-                        ( allconfirmed[confirmedID][i] - allrecovered[recoveredID][i] - alldeaths[deathsID][i] ) / allpopulation[populationID][1] * 1000000
-                    );
-                } else {
-                    myChart.data.datasets[0].data.push(0);
-                }
-                myChart.data.datasets[0].label = "Active Cases / 1 Million in " + country;
-                break;
 
             case "ConfirmedMA":    
                 if ( i > (4+14) )
                 {   
-                    myChart.data.datasets[0].data.push((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-13])/14);
+                    myChart.data.datasets[0].data.push(((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-13])/14) * norm);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Confirmed 14-day Moving Average " + country;
+                break;
+
+            case "Confirmed7MA":    
+                if ( i > (4+7) )
+                {   
+                    myChart.data.datasets[0].data.push(((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-6])/7) * norm);
+                } else {
+                    myChart.data.datasets[0].data.push(0);
+                }
+                myChart.data.datasets[0].label = "Confirmed 14-day Moving Average " + country;
+                break;
+
+            case "Confirmed28MA":    
+                if ( i > (4+28) )
+                {   
+                    myChart.data.datasets[0].data.push(((allconfirmed[confirmedID][i]-allconfirmed[confirmedID][i-27])/28) * norm);
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
@@ -277,7 +282,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
             case "RecoveredMA":    
                 if ( i > (4+14) )
                 {   
-                    myChart.data.datasets[0].data.push((allrecovered[recoveredID][i]-allrecovered[recoveredID][i-13])/14);
+                    myChart.data.datasets[0].data.push(((allrecovered[recoveredID][i]-allrecovered[recoveredID][i-13])/14) * norm);
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
@@ -287,7 +292,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
             case "DeathsMA":    
                 if ( i > (4+14) )
                 {   
-                    myChart.data.datasets[0].data.push((alldeaths[deathsID][i]-alldeaths[deathsID][i-13])/14);
+                    myChart.data.datasets[0].data.push(((alldeaths[deathsID][i]-alldeaths[deathsID][i-13])/14) * norm);
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
@@ -298,6 +303,11 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 myChart.data.datasets[0].label = "Should never occure...";
                 break; 
         }
+    }
+
+    if(norm!=1)
+    {
+        myChart.data.datasets[0].label = myChart.data.datasets[0].label + " / 1 Million";
     }
 
     myChart.update();
@@ -328,8 +338,9 @@ function selectorChanged()
     let chart      = getSelectValue("ChartSelector");
     let charttype  = getSelectValue("ChartTypeSelector");
     let chartrange = document.getElementById("ChartRange").value;
+    let chartnorm  = getSelectValue("NormSelector");
 
-    drawChart(myChart, country, chart, charttype, chartrange);
+    drawChart(myChart, country, chart, charttype, chartrange, chartnorm);
 }
 
 function getSelectValue(selectname)

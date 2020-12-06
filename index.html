@@ -56,10 +56,13 @@
         <option value="Deaths">Deaths   [raw]</option>
         <option value="DeathsDaily">Deaths Daily</option>
         <option value="DeathsMA">Deaths 14-day Moving Average</option>
-        <option value="NewCases">New Cases</option>
-        <option value="NewCases1M">New Cases / 1 Million</option>
         <option value="ActiveCases">Active Cases</option>
-        <option value="ActiveCases1M" selected="selected">Active Cases / 1 Million</option>
+    </select>
+
+    <label for="NormSelector">Normalisation:</label>
+    <select name="NormSelector" id="NormSelector" onchange="selectorChanged()">
+        <option value="Off">Raw Values</option>
+        <option value="1Million">in 1 Million</option>
     </select>
 
     <label for="ChartTypeSelector" id="ChartTypeSelectorLabel">Y Axis type:</label>
