@@ -210,7 +210,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
-                myChart.data.datasets[0].label = "New Cases in " + country;
+                myChart.data.datasets[0].label = "Confirmed Daily in " + country;
                 break;
             case "RecoveredDaily":    
                 if ( i != 4 )
@@ -219,7 +219,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
-                myChart.data.datasets[0].label = "New Cases in " + country;
+                myChart.data.datasets[0].label = "Recovered Daily in " + country;
                 break;
             case "DeathsDaily":    
                 if ( i != 4 )
@@ -228,7 +228,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
-                myChart.data.datasets[0].label = "New Cases in " + country;
+                myChart.data.datasets[0].label = "Deaths Daily in " + country;
                 break;
             case "NewCases1M":
                 if ( i != 4 )
@@ -281,7 +281,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
-                myChart.data.datasets[0].label = "Confirmed 14-day Moving Average " + country;
+                myChart.data.datasets[0].label = "Recovered 14-day Moving Average " + country;
                 break;
 
             case "DeathsMA":    
@@ -291,7 +291,7 @@ function drawChart(myChart, country, chart, charttype, chartrange)
                 } else {
                     myChart.data.datasets[0].data.push(0);
                 }
-                myChart.data.datasets[0].label = "Confirmed 14-day Moving Average " + country;
+                myChart.data.datasets[0].label = "Deaths 14-day Moving Average " + country;
                 break;
 
             default:
