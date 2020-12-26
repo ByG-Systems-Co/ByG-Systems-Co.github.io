@@ -177,7 +177,7 @@ function drawChart(myChart, country, chart, charttype, chartrange, chartnorm)
                 myChart.data.datasets[0].label = "Confirmed Daily in " + country;
                 break;
 
-            case "ConfirmedMA":    
+            case "ConfirmedMA":     
                 if ( i > (0+14) )
                 {   
                     myChart.data.datasets[0].data.push(((rawmegyedata.data[i].value[confirmedID]-rawmegyedata.data[i-13].value[confirmedID])/14) * norm);
