@@ -218,7 +218,7 @@ function drawChart(myChart, country, chart, charttype, chartrange, chartnorm)
                     break;
 
             case "RecoveredDaily":    
-                if ( i != 4 )
+                if ( i != 4  )
                 {   
                     myChart.data.datasets[0].data.push((allrecovered[recoveredID][i]-allrecovered[recoveredID][i-1]) * norm);
                 } else {
