@@ -168,7 +168,7 @@ function drawChart(myChart, country, chart, charttype, chartrange, chartnorm)
                 break;
 
             case "ConfirmedDaily":    
-                if ( i != 0 )
+                if ( (i != 0) )
                 {   
                     myChart.data.datasets[0].data.push((rawmegyedata.data[i].value[confirmedID]-rawmegyedata.data[i-1].value[confirmedID]) * norm);
                 } else {
