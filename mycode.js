@@ -382,7 +382,7 @@ window.addEventListener("resize", setChartSize);
 function setChartSize()
 {
     let rect = document.getElementById("myChartID").getBoundingClientRect();
-    let sollHeight = window.innerHeight - parseInt(rect.top);
+    let sollHeight = window.innerHeight - parseInt(rect.top) - 10;
 
     document.getElementById("myChartID").style = "display: block; height: " + sollHeight + "px;"
     document.getElementById("myChartID").height = sollHeight;
