@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <script defer src="mycode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+</head>
+
+<body>
+    <h3>ByG's COVID-19 Visualisation</h3>
+    <p>Based on the datasets of CSSEGISandData released on  
+        <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series">
+        GitHub</a>, dataset range: <span id="startdate"></span> - <span id="enddate"></span>
+    </p>
+
+    <label for="CountrySelector">Choose a country:</label>
+    <select name="CountrySelector" id="CountrySelector" onchange="selectorChanged()">
+        <option value="Hungary" selected="selected">Hungary</option>
+        <option value="Austria">Austria</option>
+        <option value="Slovakia">Slovakia</option>
+        <option value="Ukraine">Ukraine</option>
+        <option value="Romania">Romania</option>
+        <option value="Serbia">Serbia</option>
+        <option value="Croatia">Croatia</option>
+        <option value="Slovenia">Slovenia</option>
+        <option value="Czechia">Czechia</option>        
+        <option value="Germany">Germany</option>
+        <option value="Italy">Italy</option>
+        <option value="Spain">Spain</option>
+        <option value="France">France</option>
+        <option value="Netherlands">Netherlands</option>
+        <option value="Belgium">Belgium</option>
+        <option value="Russia">Russia</option>
+        <option value="China">China (partial)</option>
+        <option value="US">USA</option>
+        <option value="India">India</option>
+        <option value="Israel">Israel</option>
+        <option value="New Zealand">New Zealand</option>
+        <option value="Taiwan*">Taiwan</option>
+        <option value="Finland">Finland</option>
+        <option value="Sweden">Sweden</option>
+        <option value="Norway">Norway</option>
+        <option value="Denmark">Denmark</option>
+        <option value="Japan">Japan</option>
+        <option value="Poland">Poland</option>
+
+
+    </select> 
+
+    <label for="ChartSelector">Choose a chart:</label>
+    <select name="ChartSelector" id="ChartSelector" onchange="selectorChanged()" >
+        <option value="Confirmed">Confirmed   [raw]</option>
+        <option value="ConfirmedDaily">Confirmed Daily</option>
+        <option value="ConfirmedMA" selected="selected">Confirmed 14-day Moving Average</option>
+        <option value="Recovered">Recovered   [raw]</option>
+        <option value="RecoveredDaily">Recovered Daily</option>
+        <option value="RecoveredMA">Recovered 14-day Moving Average</option>
+        <option value="Deaths">Deaths   [raw]</option>
+        <option value="DeathsDaily">Deaths Daily</option>
+        <option value="DeathsMA">Deaths 14-day Moving Average</option>
+        <option value="ActiveCases">Active Cases</option>
+    </select>
+
+    <label for="NormSelector">Normalisation:</label>
+    <select name="NormSelector" id="NormSelector" onchange="selectorChanged()">
+        <option value="Off">Raw Values</option>
+        <option value="1Million" selected="selected">in 1 Million</option>
+    </select>
+
+    <label for="ChartTypeSelector" id="ChartTypeSelectorLabel">Y Axis type:</label>
+    <select name="ChartTypeSelector" id="ChartTypeSelector" onchange="selectorChanged()">
+        <option value="Automatic">Automatic</option>
+        <option value="Fixed">Fixed</option>
+    </select>
+
+    <label for="ChartRange" id="ChartRangeLabel">Choose the maximum of Y Axis:</label>
+    <input id="ChartRange" onchange="selectorChanged()"> 
+
+    <div id="innerbox"><canvas id="myChartID"></canvas></div>
+</body>
+</html>

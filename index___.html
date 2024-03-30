@@ -5,19 +5,13 @@
 </head>
 <body>
     <p>QR Code Reader</p>
-    <canvas id="canvas" width="1024" height="768" willReadFrequently="true"></canvas>
-
-    <!-- create a textbox for the QR code values -->
-    <p id="text"></p>
-
+    <canvas id="canvas" width="640" height="480"></canvas>
     <p>QR Code Reader</p>
 
     <script src="./jsqr/jsqr.js"></script>
     <script>
         // draw a circle to the middle of the canvas with radius 66% of the height of the canvas
         var canvas = document.getElementById('canvas');
-        canvas.willReadFrequently = true;
-
         var ctx = canvas.getContext('2d');
         ctx.beginPath();
         ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 3, 0, 2 * Math.PI);
@@ -47,23 +41,6 @@
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             // write console "image is updated"
             console.log('image is updated');
-
-            // get image data from canvas
-            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            // decode the QR code from the image data
-            var code = jsQR(imageData.data, imageData.width, imageData.height);
-            if (code) {
-                console.log('QR Code detected: ' + code.data);
-                
-                // add the new QR value to the textbox, every code in new line, filter duplicates
-                var text = document.getElementById('text');
-                if (!text.textContent.includes(code.data)) {
-                    text.textContent += code.data + '\n';
-                }
-
-                
-            }
-
             requestAnimationFrame(drawVideo);
         }
     
@@ -71,19 +48,9 @@
         if (!canvas.getContext) {
             alert('Your browser does not support the HTML5 canvas element.');
         }
+
+   
     </script>
-
-    <!--i need a button to turn off the camera and copy all the text in the textbox to clipboard-->
-    <button onclick="copyTextToClipboard()">Copy text to clipboard</button>
-
-    <script>
-        function copyTextToClipboard() {
-            var text = document.getElementById('text').textContent;
-            navigator.clipboard.writeText(text);
-        }   
-0    </script>
-
-
 
 </body>
 </html>
