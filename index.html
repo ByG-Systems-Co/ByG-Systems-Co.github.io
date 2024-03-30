@@ -39,6 +39,11 @@
         video.addEventListener('play', () => {
             drawVideo();
         });
+
+        // on mobile use the main camera instead of the front camera
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            video.srcObject = navigator.mediaDevices.getUserMedia({ video: true });
+        }
     
         function drawVideo() {
             if (video.paused || video.ended) {
@@ -125,7 +130,7 @@
 
     </script>
 
-    
+
 
 
 </body>
