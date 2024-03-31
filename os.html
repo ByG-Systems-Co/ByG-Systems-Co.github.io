@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR Code Reader</title>
+</head>
+<body>
+    <p id="OS">QR Code Reader</p>
+
+    <script>
+        function getOS() {
+                let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+                // Windows OS
+                if (/Win/i.test(navigator.platform)) {
+                    return 'Windows';
+                }
+                // macOS
+                else if (/Mac/i.test(navigator.platform)) {
+                    return 'MacOS';
+                }
+                // iOS
+                else if (/iPhone/i.test(userAgent)) {
+                    return 'iOS';
+                }
+                // Android
+                else if (/Android/i.test(userAgent)) {
+                    return 'Android';
+                }
+                // Linux
+                else if (/Linux/i.test(navigator.platform)) {
+                    return 'Linux';
+                }
+                else {
+                    return 'other';
+                }
+            }        
+        
+        var text = document.getElementById('OS');
+        text.textContent=getOS();
+    </script>
+
+</body>
+</html>
+
+

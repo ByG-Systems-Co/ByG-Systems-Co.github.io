@@ -4,7 +4,7 @@
   <title>QR Code Reader</title>
 </head>
 <body>
-    <p>QR Code Reader</p>
+    <p id="OS">QR Code Reader</p>
     <canvas id="canvas" width="800px" height="600px" willReadFrequently="true"></canvas>
 
     <!-- create a textbox for the QR code values -->
@@ -68,6 +68,28 @@
             }
 
             requestAnimationFrame(drawVideo);
+
+            function getOS() {
+                let platform = navigator.platform;
+                let osPlatforms = [
+                    { key: 'Win', name: 'Windows' },
+                    { key: 'Mac', name: 'MacOS' },
+                    { key: 'Linux', name: 'Linux' },
+                    { key: 'Android', name: 'Android' },
+                    { key: 'iPhone', name: 'iOS' }
+                ];
+                for(let os of osPlatforms) {
+                    if(platform.indexOf(os.key) > -1) {
+                        return os.name;
+                    }
+                }
+                return 'other';
+            }
+            var text = document.getElementById('OS');
+            text.textContent=getOS();
+
+
+
         }
     
         // the video didn't show on the canvas
