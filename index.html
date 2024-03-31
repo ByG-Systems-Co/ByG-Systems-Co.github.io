@@ -111,6 +111,7 @@
     <button onclick="switchCamera()" width="200px" height="200px">Switch Camera</button>
     <script>
         function switchCamera() {
+/*
             // if more cameras avalilable, then switch through between them, every click turns on a new camera
             if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
                 console.log("Multiple Cameras Available");
@@ -135,7 +136,36 @@
                         console.error('Error enumerating video devices:', err);
                     });
             }   
-        
+            */
+
+            function switchCamera() {
+                // if more cameras available, then switch between them, every click turns on a new camera
+                if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                    console.log("Multiple Cameras Available");
+                    navigator.mediaDevices.enumerateDevices()
+                        .then(devices => {
+                            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                            if (videoDevices.length > 1) {
+                                const currentDeviceId = video.srcObject.getVideoTracks()[0].getSettings().deviceId;
+                                const newDevice = videoDevices.find(device => device.deviceId !== currentDeviceId);
+                                const facingMode = newDevice.label.includes('front') ? 'user' : 'environment';
+                                video.srcObject = null;
+                                navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode } })
+                                    .then(stream => {
+                                        video.srcObject = stream;
+                                        video.play();
+                                    })
+                                    .catch(err => {
+                                        console.error('Error accessing the camera:', err);
+                                    });
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error enumerating video devices:', err);
+                        });
+                }   
+            }
+            
 
 
 
