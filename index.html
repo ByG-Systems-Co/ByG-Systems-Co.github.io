@@ -150,7 +150,7 @@
                                 const newDevice = videoDevices.find(device => device.deviceId !== currentDeviceId);
                                 const facingMode = newDevice.label.includes('front') ? 'user' : 'environment';
                                 video.srcObject = null;
-                                navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode } })
+                                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
                                     .then(stream => {
                                         video.srcObject = stream;
                                         video.play();
