@@ -67,7 +67,7 @@
             var ctx = canvas.getContext('2d');
             ctx.beginPath();
             ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 3, 0, 2 * Math.PI);
-            ctx.fillStyle = 'green';
+            ctx.fillStyle = 'red';
             ctx.fill(); 
         }
 
@@ -171,6 +171,7 @@
             buttons.forEach(button => {
                 button.style.width = window.innerWidth * 0.325 + 'px';
                 button.style.height = 100 + 'px';
+                button.style.fontSize = 32 + 'px';
             });
         }
         // Call the function initially and whenever the window is resized
