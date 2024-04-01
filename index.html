@@ -8,40 +8,94 @@
     <canvas id="canvas" width="800px" height="600px" willReadFrequently="true"></canvas>
 
     <!-- create a textbox for the QR code values -->
-    <p id="text"></p>
-
-    <p>QR Code Reader</p>
+    <p id="text">QR Code Reader</p>
 
     <script src="jsQR/jsQR.js"></script>
-    <script>
+
+<!--   <video id="video" autoplay controls muted playsinline></video> -->
+
+    <br><br>
+
+    <script>        
+        function getOS() {
+            let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Windows OS
+            if (/Win/i.test(navigator.platform)) {
+                return 'Windows';
+            }
+            // macOS
+            else if (/Mac/i.test(navigator.platform)) {
+                return 'MacOS';
+            }
+            // iOS
+            else if (/iPhone/i.test(userAgent)) {
+                return 'iOS';
+            }
+            // Android
+            else if (/Android/i.test(userAgent)) {
+                return 'Android';
+            }
+            // Linux
+            else if (/Linux/i.test(navigator.platform)) {
+                return 'Linux';
+            }
+            else {
+                return 'other';
+            }
+        }
+
+        os = document.getElementById("OS");
+        os.textContent = getOS();
+
         // draw a circle to the middle of the canvas with radius 66% of the height of the canvas
         var canvas = document.getElementById('canvas');
         canvas.willReadFrequently = true;
 
-        var ctx = canvas.getContext('2d');
-        ctx.beginPath();
-        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 3, 0, 2 * Math.PI);
-        ctx.fillStyle = 'red';
-        ctx.fill(); 
-    
-        // turn on the camera
+        // the video didn't show on the canvas
+        if (!canvas.getContext) {
+            alert('Your browser does not support the HTML5 canvas element.');
+        } else {
+            var ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 3, 0, 2 * Math.PI);
+            ctx.fillStyle = 'red';
+            ctx.fill(); 
+        }
+
+        var constraints;
+
+        if ("Android" === getOS()) {
+            constraints = { video: { facingMode: { exact: "user" } } };
+            constraints = { video: true };
+        } else {
+            constraints = { video: true }
+        }
+
         var video = document.createElement('video');
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-                video.play();
-            })
-            .catch(err => {
-                console.error('Error accessing the camera:', err);
-            });
-        
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Safe to call getUserMedia
+            navigator.mediaDevices.getUserMedia( constraints )
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(err => {
+                    console.error('Error accessing the camera:', err);
+                });
+        } else {
+            console.error('Webcam is not available');
+        }
+                
         // show the camera preview in the canvas
         video.addEventListener('play', () => {
             drawVideo();
         });
-
+        
         function drawVideo() {
             if (video.paused || video.ended) {
+                console.log('video is paused or ended');
                 return;
             }
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -63,44 +117,21 @@
                     var audio = new Audio('beep.mp3');
                     audio.play();
                 }
-
-                
             }
 
             requestAnimationFrame(drawVideo);
-
-            function getOS() {
-                let platform = navigator.platform;
-                let osPlatforms = [
-                    { key: 'Win', name: 'Windows' },
-                    { key: 'Mac', name: 'MacOS' },
-                    { key: 'Linux', name: 'Linux' },
-                    { key: 'Android', name: 'Android' },
-                    { key: 'iPhone', name: 'iOS' }
-                ];
-                for(let os of osPlatforms) {
-                    if(platform.indexOf(os.key) > -1) {
-                        return os.name;
-                    }
-                }
-                return 'other';
-            }
-            var text = document.getElementById('OS');
-            text.textContent=getOS();
-
-
-
         }
-    
-        // the video didn't show on the canvas
-        if (!canvas.getContext) {
-            alert('Your browser does not support the HTML5 canvas element.');
-        }
-    </script>
 
-    <!--i need a button to turn off the camera and copy all the text in the textbox to clipboard-->
-    <button onclick="copyTextToClipboard()" width="200px" height="200px">Copy text to clipboard</button>
 
+
+
+
+        </script>
+
+
+
+
+    <button onclick="copyTextToClipboard()">Copy text to clipboard</button>
     <script>
         function copyTextToClipboard() {
             var text = document.getElementById('text').textContent;
@@ -108,8 +139,17 @@
         }   
     </script>
 
+    <button onclick="clearText()">Clear text</button>
+    <script>
+        function clearText() {
+            var text = document.getElementById('text');
+            text.textContent = '';  
+        }   
+    </script>
+
+
     <!-- i need a button to toggle on off camera -->
-    <button onclick="toggleCamera()" width="200px" height="200px">Toggle camera</button>
+    <button onclick="toggleCamera()">Toggle camera</button>
 
     <script>
         function toggleCamera() {
@@ -126,11 +166,9 @@
                     });
             }
         }
-
-
     </script>
 
-    <button onclick="switchCamera()" width="200px" height="200px">Switch Camera</button>
+    <button onclick="switchCamera()">Switch Camera</button>
     <script>
         function switchCamera() {
 /*
@@ -241,7 +279,7 @@
         }
     </script>
 
-    <button onclick="turnOffCamera()" width="200px" height="200px">Turn off camera</button> 
+    <button onclick="turnOffCamera()">Turn off camera</button> 
     <script>
         function turnOffCamera() {
             video.srcObject = null;
