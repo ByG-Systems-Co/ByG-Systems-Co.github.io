@@ -47,8 +47,8 @@
         
         function resizeCanvas() {
             const canvas = document.getElementById('canvas');
-            canvas.width = window.innerWidth; // Set canvas width to window width
-            canvas.height = window.innerWidth*0.66; // Set canvas height to window height
+            canvas.width = window.innerWidth-16; // Set canvas width to window width
+            canvas.height = (window.innerWidth-16)*0.66; // Set canvas height to window height
         }
     
         // Call the function initially and whenever the window is resized
