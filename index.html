@@ -87,13 +87,6 @@
                 .then(stream => {
                     video.srcObject = stream;
                     video.play();
-//                    const track = stream.getVideoTracks()[0];
-//                    const settings = track.getSettings();
-//                    const width = settings.width;
-//                    const height = settings.height;
-//                    const aspectratio = settings.aspectRatio;
-//                    console.log(`Camera stream dimensions: ${width}x${height}`);
-//                    document.getElementById("OS").innerHTML = `Camera stream dimensions: ${width}x${height}`;
                 })
                 .catch(err => {
                     console.error('Error accessing the camera:', err);
@@ -137,9 +130,6 @@
         }
     </script>
 
-
-
-
     <button id="b" onclick="copyTextToClipboard()" style="width: 100px; height: 100px;">Copy text to clipboard</button>
     <script>
         function copyTextToClipboard() {
@@ -155,7 +145,6 @@
             qr.textContent = '';  
         }   
     </script>
-
 
     <button id="b" onclick="toggleCamera()" style="width: 100px; height: 100px;">Toggle camera</button>
     <script>
@@ -174,6 +163,21 @@
             }
         }
     </script>
+
+    <script>
+        //resize the buttons id == "b" to the screen size
+        function resizeButtons() {
+            const buttons = document.querySelectorAll('#b');
+            buttons.forEach(button => {
+                button.style.width = window.innerWidth * 0.3 + 'px';
+                button.style.height = 100 + 'px';
+            });
+        }
+        // Call the function initially and whenever the window is resized
+        window.addEventListener('resize', resizeButtons);
+        resizeButtons();
+    </script>
+
 
 </body>
 </html>
