@@ -87,6 +87,8 @@
                 .then(stream => {
                     video.srcObject = stream;
                     video.play();
+                    // set zoom of camera to level 3
+                    video.setAttribute('zoom', 3);
                 })
                 .catch(err => {
                     console.error('Error accessing the camera:', err);
