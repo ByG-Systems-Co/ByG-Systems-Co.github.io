@@ -4,7 +4,7 @@
   <title>QR Code Reader</title>
 </head>
 <body>
-    <canvas id="canvas" width="800px" height="600px" willReadFrequently="true"></canvas>
+    <canvas id="canvas" willReadFrequently="true"></canvas>
     <p id="OS">QR Code Reader</p>
     <p id="QR">Collected QR Codes: </p>
 
@@ -44,7 +44,21 @@
 
         // draw a circle to the middle of the canvas with radius 66% of the height of the canvas
         var canvas = document.getElementById('canvas');
-        canvas.willReadFrequently = true;
+        
+        function resizeCanvas() {
+            const canvas = document.getElementById('canvas');
+            canvas.width = window.innerWidth; // Set canvas width to window width
+            canvas.height = window.innerWidth*0.66; // Set canvas height to window height
+        }
+    
+        // Call the function initially and whenever the window is resized
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        console.log(`Viewport dimensions: ${viewportWidth}x${viewportHeight}`);
+        document.getElementById("OS").innerHTML = `Viewport dimensions: ${viewportWidth}x${viewportHeight}`;
 
         // the video didn't show on the canvas
         if (!canvas.getContext) {
@@ -73,12 +87,13 @@
                 .then(stream => {
                     video.srcObject = stream;
                     video.play();
-                    const track = stream.getVideoTracks()[2];
-                    const settings = track.getSettings();
-                    const width = settings.width;
-                    const height = settings.height;
-                    console.log(`Camera stream dimensions: ${width}x${height}`);
-                    document.getElementById("OS").innerHTML = `Camera stream dimensions: ${width}x${height}`;
+//                    const track = stream.getVideoTracks()[0];
+//                    const settings = track.getSettings();
+//                    const width = settings.width;
+//                    const height = settings.height;
+//                    const aspectratio = settings.aspectRatio;
+//                    console.log(`Camera stream dimensions: ${width}x${height}`);
+//                    document.getElementById("OS").innerHTML = `Camera stream dimensions: ${width}x${height}`;
                 })
                 .catch(err => {
                     console.error('Error accessing the camera:', err);
@@ -125,7 +140,7 @@
 
 
 
-    <button onclick="copyTextToClipboard()" style="width: 100px; height: 100px;">Copy text to clipboard</button>
+    <button id="b" onclick="copyTextToClipboard()" style="width: 100px; height: 100px;">Copy text to clipboard</button>
     <script>
         function copyTextToClipboard() {
             var text = document.getElementById('text').textContent;
@@ -133,7 +148,7 @@
         }   
     </script>
 
-    <button onclick="clearText()" style="width: 100px; height: 100px;">Clear text</button>
+    <button id="b" onclick="clearText()" style="width: 100px; height: 100px;">Clear text</button>
     <script>
         function clearText() {
             var qr = document.getElementById('QR');
@@ -142,7 +157,7 @@
     </script>
 
 
-    <button onclick="toggleCamera()" style="width: 100px; height: 100px;">Toggle camera</button>
+    <button id="b" onclick="toggleCamera()" style="width: 100px; height: 100px;">Toggle camera</button>
     <script>
         function toggleCamera() {
             if (video.srcObject) {
