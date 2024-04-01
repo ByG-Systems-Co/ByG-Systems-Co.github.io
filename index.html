@@ -73,6 +73,12 @@
                 .then(stream => {
                     video.srcObject = stream;
                     video.play();
+                    const track = stream.getVideoTracks()[0];
+                    const settings = track.getSettings();
+                    const width = settings.width;
+                    const height = settings.height;
+                    console.log(`Camera stream dimensions: ${width}x${height}`);
+                    document.getElementById("OS").innerHTML = `Camera stream dimensions: ${width}x${height}`;
                 })
                 .catch(err => {
                     console.error('Error accessing the camera:', err);
