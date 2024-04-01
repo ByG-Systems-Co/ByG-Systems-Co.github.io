@@ -87,7 +87,9 @@
         } else {
             console.error('Webcam is not available');
         }
-                
+        
+        document.getElementById("text").innerHTML = "Facing mode: " + constraints;
+
         // show the camera preview in the canvas
         video.addEventListener('play', () => {
             drawVideo();
