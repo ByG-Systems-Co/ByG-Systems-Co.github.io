@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>      
+
+<head>
+    <title>QR Code Reader</title>
+</head>
+
+<body>
+    <p id="text">QR Code Reader</p>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <p id="text2">QR Code Reader</p>
+
+    <script>
+        // draw a circle to the middle of the canvas with radius 66% of the height of the canvas
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 4, 0, 2 * Math.PI);
+        ctx.fillStyle = 'darkorange';
+        ctx.fill();
+
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Safe to call getUserMedia
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    // Stream contains the camera feed
+                    // You can display it in a <video> element or process it further
+                    const videoElement = document.createElement('video');
+                    videoElement.srcObject = stream;
+                    videoElement.play();
+                })
+                .catch(err => {
+                    document.getElementById("text").innerHTML = "Error accessing the camera: " + err;
+                    console.error('Error accessing the camera:', err);
+                });
+        } else {
+            document.getElementById("text").innerHTML = 'Webcam is not available';
+            console.error('Webcam is not available');
+        }
+    </script>
