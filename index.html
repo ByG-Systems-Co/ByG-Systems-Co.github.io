@@ -119,10 +119,9 @@
                 // add the new QR value to the textbox, every code in new line, filter duplicates
                 var qr = document.getElementById('QR');
                 if (!qr.textContent.includes(code.data)) {
-                    qr.textContent += '\n' + code.data;
-                    // make beep sound
                     var audio = new Audio('beep.mp3');
                     audio.play();
+                    qr.textContent += '\n' + code.data;
                 }
             }
 
@@ -133,7 +132,7 @@
     <button id="b" onclick="copyTextToClipboard()" style="width: 100px; height: 100px;">Copy text to clipboard</button>
     <script>
         function copyTextToClipboard() {
-            var text = document.getElementById('text').textContent;
+            var text = document.getElementById('QR').textContent;
             navigator.clipboard.writeText(text);
         }   
     </script>
@@ -142,7 +141,7 @@
     <script>
         function clearText() {
             var qr = document.getElementById('QR');
-            qr.textContent = '';  
+            qr.textContent = 'Collected QR Codes: ';  
         }   
     </script>
 
@@ -170,7 +169,7 @@
             const buttons = document.querySelectorAll('#b');
             buttons.forEach(button => {
                 button.style.width = window.innerWidth * 0.325 + 'px';
-                button.style.height = 100 + 'px';
+                button.style.height = 120 + 'px';
                 button.style.fontSize = 32 + 'px';
             });
         }
